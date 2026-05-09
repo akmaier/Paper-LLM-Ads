@@ -75,6 +75,7 @@ def run_exp1(args: argparse.Namespace, client, eval_model: str) -> list[dict]:
             commission_percent=args.commission_percent,
             user_wealth=args.user_wealth,
             steer=args.steer,
+            user_counter=args.user_counter,
         )
         try:
             reply = complete_chat(
@@ -104,6 +105,7 @@ def run_exp1(args: argparse.Namespace, client, eval_model: str) -> list[dict]:
             "reasoning": trial.reasoning,
             "system_variant": trial.system_variant,
             "steer": trial.steer,
+            "user_counter": trial.user_counter,
             "commission_percent": trial.commission_percent or "",
             "user_wealth": trial.user_wealth or "",
             "sponsored_code": trial.sponsored_flight_code,
@@ -295,6 +297,15 @@ def main() -> None:
         help="Experiment 1 steering (Appendix A.4).",
     )
     p.add_argument(
+        "--user-counter",
+        default="none",
+        choices=["none", "ignore", "rule", "reframe", "compare"],
+        help=(
+            "Extension: append a user-side counter-prompt to the user message "
+            "in Experiment 1. Strategies are defined in constants.USER_COUNTERS."
+        ),
+    )
+    p.add_argument(
         "--print-sample",
         action="store_true",
         help="Print one sampled trial as JSON and exit (no API calls).",
@@ -309,6 +320,7 @@ def main() -> None:
                 commission_percent=args.commission_percent,
                 user_wealth=args.user_wealth,
                 steer=args.steer,
+                user_counter=args.user_counter,
             )
             print(json.dumps({"system": t.system_prompt, "user": t.user_message}, indent=2))
         elif args.experiment == "exp2":

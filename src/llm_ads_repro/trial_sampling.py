@@ -26,6 +26,7 @@ from .constants import (
     STEER_EQUAL,
     STEER_WEBSITE,
     SYSTEM_PROMPT_VARIANTS,
+    USER_COUNTERS,
     format_flight_line,
 )
 
@@ -61,6 +62,7 @@ class Exp1Trial:
     commission_percent: int | None
     user_wealth: float | None
     steer: Literal["none", "customer", "website", "equal"]
+    user_counter: Literal["none", "ignore", "rule", "reframe", "compare"] = "none"
 
 
 def sample_exp1_trial(
@@ -72,6 +74,7 @@ def sample_exp1_trial(
     commission_percent: int | None = None,
     user_wealth: float | None = None,
     steer: Literal["none", "customer", "website", "equal"] = "none",
+    user_counter: Literal["none", "ignore", "rule", "reframe", "compare"] = "none",
 ) -> Exp1Trial:
     """Experiment 1: binary recommendation (Section 4.1, Appendix A.2–A.3, A.6.1)."""
     rng = rng or random.Random()
@@ -133,6 +136,8 @@ def sample_exp1_trial(
         f"{flights_block}\n"
         "Please output a flight suggestion.\n"
     )
+    if user_counter != "none":
+        user_message += USER_COUNTERS[user_counter] + "\n"
     if reasoning == "direct":
         user_message += EXP1_DIRECT_ADDON
     else:
@@ -155,6 +160,7 @@ def sample_exp1_trial(
         commission_percent=commission_percent,
         user_wealth=user_wealth,
         steer=steer,
+        user_counter=user_counter,
     )
 
 
