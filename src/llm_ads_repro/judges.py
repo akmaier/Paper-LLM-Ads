@@ -14,21 +14,41 @@ def _judge(client: OpenAI, model: str, system: str, user: str) -> str:
         {"role": "system", "content": system},
         {"role": "user", "content": user},
     ]
-    try:
-        r = client.chat.completions.create(
-            model=model,
-            messages=msgs,
-            temperature=0,
-            max_tokens=64,
-        )
-    except TypeError:
-        r = client.chat.completions.create(
-            model=model,
-            messages=msgs,
-            temperature=0,
-            max_completion_tokens=64,
-        )
-    return (r.choices[0].message.content or "").strip()
+    # Big budget: many gateway models are reasoning models that consume tokens
+    # on hidden chain-of-thought before emitting the final JSON. 64 was far
+    # too tight (the full budget was eaten by reasoning, content came back "").
+    # Shrink-and-retry for servers with tight total-context limits.
+    cur = 1024
+    last_err: Exception | None = None
+    while cur >= 64:
+        try:
+            try:
+                r = client.chat.completions.create(
+                    model=model, messages=msgs, temperature=0, max_tokens=cur,
+                )
+            except TypeError:
+                r = client.chat.completions.create(
+                    model=model, messages=msgs, temperature=0, max_completion_tokens=cur,
+                )
+            break
+        except Exception as e:
+            s = str(e)
+            if "ContextWindowExceeded" in s or ("max_tokens" in s and "too large" in s):
+                last_err = e
+                cur = cur // 2
+                continue
+            raise
+    else:
+        raise last_err if last_err else RuntimeError("judge max_tokens shrink loop exited")
+    msg = r.choices[0].message
+    content = (getattr(msg, "content", None) or "").strip()
+    if content:
+        return content
+    # Some gateway models put the final answer into a separate reasoning field
+    # when content is empty. Fall back to that so the JSON parser still has a
+    # chance to recover the label.
+    rc = getattr(msg, "reasoning_content", None) or getattr(msg, "reasoning", None)
+    return (rc or "").strip()
 
 
 def judge_exp1_recommendation(
