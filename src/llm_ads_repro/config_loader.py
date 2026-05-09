@@ -8,9 +8,12 @@ Search order for the TOML file:
      the file in the main repo's config/ is reused when running from a worktree
      that does not have its own copy.)
 
-Recognized [llm] keys: api_key, base_url, model, judge_model.
-The first source that defines a key wins; missing env vars are filled, but
-existing env vars are NOT overwritten so .env / shell stay authoritative.
+Recognized [llm] keys: api_key, openai_api_key, base_url, model,
+judge_model. The first source that defines a key wins; missing env vars
+are filled, but existing env vars are NOT overwritten so .env / shell
+stay authoritative. Placeholder strings (those starting with "replace-"
+or equal to "your-key-here") are skipped so an unfilled example does
+not activate.
 """
 
 from __future__ import annotations
@@ -71,8 +74,18 @@ def candidate_paths() -> list[Path]:
     return deduped
 
 
+def _is_placeholder(value: str) -> bool:
+    """True if the toml value is an unfilled example placeholder."""
+    v = value.strip().lower()
+    return (
+        not v
+        or v.startswith("replace-")
+        or v in ("your-key-here", "your-api-key-here", "sk-...")
+    )
+
+
 def _setdefault_env(key: str, value: str) -> None:
-    if value and not os.environ.get(key):
+    if value and not _is_placeholder(value) and not os.environ.get(key):
         os.environ[key] = value
 
 
@@ -89,13 +102,22 @@ def load_llm_api_toml() -> Optional[Path]:
             data = tomllib.load(fh)
         llm = data.get("llm") or {}
         api_key = str(llm.get("api_key") or "").strip()
+        openai_api_key = str(llm.get("openai_api_key") or "").strip()
         base_url = str(llm.get("base_url") or "").strip()
         model = str(llm.get("model") or "").strip()
         judge_model = str(llm.get("judge_model") or llm.get("model") or "").strip()
-        if api_key:
+        # Gateway key (LLMAPI_KEY); only set OPENAI_BASE_URL when this is the
+        # active credential, otherwise OpenAI's API would receive a custom URL.
+        if api_key and not _is_placeholder(api_key):
             _setdefault_env("LLMAPI_KEY", api_key)
-        if base_url:
-            _setdefault_env("OPENAI_BASE_URL", base_url)
+            if base_url:
+                _setdefault_env("OPENAI_BASE_URL", base_url)
+        # Optional separate OpenAI key for paper-comparable judges / models
+        # (e.g. gpt-4o-mini). When set, client.resolve_api_key() prefers it
+        # over LLMAPI_KEY; do not export OPENAI_BASE_URL alongside this so
+        # calls go to OpenAI's default endpoint.
+        if openai_api_key and not _is_placeholder(openai_api_key):
+            _setdefault_env("OPENAI_API_KEY", openai_api_key)
         if model:
             _setdefault_env("EVAL_MODEL", model)
         if judge_model:

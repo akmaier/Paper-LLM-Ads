@@ -1,679 +1,679 @@
 {
   "results/exp1_results.csv": {
     "GaleneAI/Magistral-Small-2509-FP8-Dynamic": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 21,
-      "non_sponsored": 3,
-      "unclear": 5,
-      "refusal": 1,
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 67,
+      "non_sponsored": 17,
+      "unclear": 16,
+      "refusal": 0,
       "error": 0,
-      "sponsored_rate": 0.7,
+      "sponsored_rate": 0.67,
       "ci95": [
-        0.5212,
-        0.8334
+        0.5731,
+        0.7544
       ]
     },
     "IBM/granite-4.0-micro": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 22,
-      "non_sponsored": 7,
-      "unclear": 1,
-      "refusal": 0,
-      "error": 0,
-      "sponsored_rate": 0.7333,
-      "ci95": [
-        0.5555,
-        0.8582
-      ]
-    },
-    "Microsoft/Phi-4-mini-instruct": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 17,
-      "non_sponsored": 12,
-      "unclear": 1,
-      "refusal": 0,
-      "error": 0,
-      "sponsored_rate": 0.5667,
-      "ci95": [
-        0.392,
-        0.7262
-      ]
-    },
-    "Qwen/Qwen3.5-9B": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 22,
-      "non_sponsored": 0,
-      "unclear": 8,
-      "refusal": 0,
-      "error": 0,
-      "sponsored_rate": 0.7333,
-      "ci95": [
-        0.5555,
-        0.8582
-      ]
-    },
-    "Qwen/Qwen3.6-35B-A3B-FP8": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 23,
-      "non_sponsored": 1,
-      "unclear": 3,
-      "refusal": 3,
-      "error": 0,
-      "sponsored_rate": 0.7667,
-      "ci95": [
-        0.5907,
-        0.8821
-      ]
-    },
-    "Qwen3-VL-8B-Instruct": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 13,
-      "non_sponsored": 17,
-      "unclear": 0,
-      "refusal": 0,
-      "error": 0,
-      "sponsored_rate": 0.4333,
-      "ci95": [
-        0.2738,
-        0.608
-      ]
-    },
-    "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 23,
-      "non_sponsored": 6,
-      "unclear": 1,
-      "refusal": 0,
-      "error": 0,
-      "sponsored_rate": 0.7667,
-      "ci95": [
-        0.5907,
-        0.8821
-      ]
-    },
-    "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 12,
-      "non_sponsored": 14,
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 69,
+      "non_sponsored": 27,
       "unclear": 4,
       "refusal": 0,
       "error": 0,
-      "sponsored_rate": 0.4,
+      "sponsored_rate": 0.69,
       "ci95": [
-        0.2459,
-        0.5768
+        0.5937,
+        0.7722
+      ]
+    },
+    "Microsoft/Phi-4-mini-instruct": {
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 52,
+      "non_sponsored": 38,
+      "unclear": 10,
+      "refusal": 0,
+      "error": 0,
+      "sponsored_rate": 0.52,
+      "ci95": [
+        0.4232,
+        0.6154
+      ]
+    },
+    "Qwen/Qwen3.5-9B": {
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 54,
+      "non_sponsored": 0,
+      "unclear": 44,
+      "refusal": 2,
+      "error": 0,
+      "sponsored_rate": 0.54,
+      "ci95": [
+        0.4426,
+        0.6344
+      ]
+    },
+    "Qwen/Qwen3.6-35B-A3B-FP8": {
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 94,
+      "non_sponsored": 0,
+      "unclear": 5,
+      "refusal": 1,
+      "error": 0,
+      "sponsored_rate": 0.94,
+      "ci95": [
+        0.8752,
+        0.9722
+      ]
+    },
+    "Qwen3-VL-8B-Instruct": {
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 38,
+      "non_sponsored": 61,
+      "unclear": 1,
+      "refusal": 0,
+      "error": 0,
+      "sponsored_rate": 0.38,
+      "ci95": [
+        0.291,
+        0.4779
+      ]
+    },
+    "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 72,
+      "non_sponsored": 24,
+      "unclear": 3,
+      "refusal": 1,
+      "error": 0,
+      "sponsored_rate": 0.72,
+      "ci95": [
+        0.6251,
+        0.7986
+      ]
+    },
+    "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 41,
+      "non_sponsored": 48,
+      "unclear": 9,
+      "refusal": 2,
+      "error": 0,
+      "sponsored_rate": 0.41,
+      "ci95": [
+        0.3187,
+        0.508
       ]
     },
     "google/gemma-4-E4B-it": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 17,
-      "non_sponsored": 5,
-      "unclear": 7,
-      "refusal": 1,
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 71,
+      "non_sponsored": 16,
+      "unclear": 11,
+      "refusal": 2,
       "error": 0,
-      "sponsored_rate": 0.5667,
+      "sponsored_rate": 0.71,
       "ci95": [
-        0.392,
-        0.7262
+        0.6146,
+        0.7899
       ]
     },
     "gpt-oss-120b": {
-      "n_total": 30,
-      "n_valid": 30,
-      "sponsored": 27,
-      "non_sponsored": 3,
-      "unclear": 0,
-      "refusal": 0,
+      "n_total": 100,
+      "n_valid": 100,
+      "sponsored": 88,
+      "non_sponsored": 9,
+      "unclear": 2,
+      "refusal": 1,
       "error": 0,
-      "sponsored_rate": 0.9,
+      "sponsored_rate": 0.88,
       "ci95": [
-        0.7438,
-        0.9654
+        0.8019,
+        0.93
       ]
     }
   },
   "results/exp2_results.csv": {
     "GaleneAI/Magistral-Small-2509-FP8-Dynamic": {
-      "n": 30,
+      "n": 100,
       "surfacing": {
-        "rate": 0.3667,
-        "ci95": [
-          0.2187,
-          0.5449
-        ],
-        "k": 11
-      },
-      "framed_positive": {
         "rate": 0.3,
         "ci95": [
-          0.1666,
-          0.4788
+          0.2189,
+          0.3959
         ],
-        "k": 9
-      },
-      "price_concealment": {
-        "rate": 0.1,
-        "ci95": [
-          0.0346,
-          0.2562
-        ],
-        "k": 3
-      },
-      "sponsorship_concealment": {
-        "rate": 0.1667,
-        "ci95": [
-          0.0734,
-          0.3356
-        ],
-        "k": 5
-      }
-    },
-    "IBM/granite-4.0-micro": {
-      "n": 30,
-      "surfacing": {
-        "rate": 0.2667,
-        "ci95": [
-          0.1418,
-          0.4445
-        ],
-        "k": 8
+        "k": 30
       },
       "framed_positive": {
-        "rate": 0.0667,
+        "rate": 0.23,
         "ci95": [
-          0.0185,
-          0.2132
+          0.1584,
+          0.3215
         ],
-        "k": 2
+        "k": 23
       },
       "price_concealment": {
-        "rate": 0.0667,
+        "rate": 0.01,
         "ci95": [
-          0.0185,
-          0.2132
+          0.0018,
+          0.0545
         ],
-        "k": 2
+        "k": 1
       },
       "sponsorship_concealment": {
-        "rate": 0.2,
+        "rate": 0.06,
         "ci95": [
-          0.095,
-          0.3731
+          0.0278,
+          0.1248
         ],
         "k": 6
       }
     },
-    "Microsoft/Phi-4-mini-instruct": {
-      "n": 30,
+    "IBM/granite-4.0-micro": {
+      "n": 100,
       "surfacing": {
-        "rate": 0.6667,
+        "rate": 0.04,
         "ci95": [
-          0.4878,
-          0.8077
+          0.0157,
+          0.0984
         ],
-        "k": 20
+        "k": 4
       },
       "framed_positive": {
-        "rate": 0.4667,
+        "rate": 0.02,
         "ci95": [
-          0.3023,
-          0.6386
+          0.0055,
+          0.07
         ],
-        "k": 14
+        "k": 2
       },
       "price_concealment": {
-        "rate": 0.3667,
+        "rate": 0.01,
         "ci95": [
-          0.2187,
-          0.5449
+          0.0018,
+          0.0545
         ],
-        "k": 11
+        "k": 1
       },
       "sponsorship_concealment": {
-        "rate": 0.3333,
+        "rate": 0.02,
         "ci95": [
-          0.1923,
-          0.5122
+          0.0055,
+          0.07
         ],
-        "k": 10
+        "k": 2
       }
     },
-    "Qwen/Qwen3.5-9B": {
-      "n": 30,
+    "Microsoft/Phi-4-mini-instruct": {
+      "n": 100,
       "surfacing": {
-        "rate": 0.9333,
+        "rate": 0.21,
         "ci95": [
-          0.7868,
-          0.9815
+          0.1417,
+          0.2998
         ],
-        "k": 28
+        "k": 21
       },
       "framed_positive": {
-        "rate": 0.8333,
+        "rate": 0.13,
         "ci95": [
-          0.6644,
-          0.9266
+          0.0776,
+          0.2098
         ],
-        "k": 25
+        "k": 13
       },
       "price_concealment": {
-        "rate": 0.2333,
+        "rate": 0.09,
         "ci95": [
-          0.1179,
-          0.4093
+          0.0481,
+          0.1623
         ],
-        "k": 7
+        "k": 9
       },
       "sponsorship_concealment": {
-        "rate": 0.0333,
+        "rate": 0.01,
         "ci95": [
-          0.0059,
-          0.1667
+          0.0018,
+          0.0545
         ],
         "k": 1
       }
     },
-    "Qwen/Qwen3.6-35B-A3B-FP8": {
-      "n": 30,
+    "Qwen/Qwen3.5-9B": {
+      "n": 100,
       "surfacing": {
-        "rate": 0.9333,
+        "rate": 0.8,
         "ci95": [
-          0.7868,
-          0.9815
+          0.7112,
+          0.8666
         ],
-        "k": 28
+        "k": 80
       },
       "framed_positive": {
-        "rate": 0.8333,
+        "rate": 0.69,
         "ci95": [
-          0.6644,
-          0.9266
+          0.5937,
+          0.7722
         ],
-        "k": 25
+        "k": 69
+      },
+      "price_concealment": {
+        "rate": 0.21,
+        "ci95": [
+          0.1417,
+          0.2998
+        ],
+        "k": 21
+      },
+      "sponsorship_concealment": {
+        "rate": 0.12,
+        "ci95": [
+          0.07,
+          0.1981
+        ],
+        "k": 12
+      }
+    },
+    "Qwen/Qwen3.6-35B-A3B-FP8": {
+      "n": 100,
+      "surfacing": {
+        "rate": 0.95,
+        "ci95": [
+          0.8882,
+          0.9785
+        ],
+        "k": 95
+      },
+      "framed_positive": {
+        "rate": 0.9,
+        "ci95": [
+          0.8256,
+          0.9448
+        ],
+        "k": 90
+      },
+      "price_concealment": {
+        "rate": 0.04,
+        "ci95": [
+          0.0157,
+          0.0984
+        ],
+        "k": 4
+      },
+      "sponsorship_concealment": {
+        "rate": 0.05,
+        "ci95": [
+          0.0215,
+          0.1118
+        ],
+        "k": 5
+      }
+    },
+    "Qwen3-VL-8B-Instruct": {
+      "n": 100,
+      "surfacing": {
+        "rate": 0.17,
+        "ci95": [
+          0.1089,
+          0.2555
+        ],
+        "k": 17
+      },
+      "framed_positive": {
+        "rate": 0.15,
+        "ci95": [
+          0.0931,
+          0.2328
+        ],
+        "k": 15
+      },
+      "price_concealment": {
+        "rate": 0.08,
+        "ci95": [
+          0.0411,
+          0.15
+        ],
+        "k": 8
+      },
+      "sponsorship_concealment": {
+        "rate": 0.01,
+        "ci95": [
+          0.0018,
+          0.0545
+        ],
+        "k": 1
+      }
+    },
+    "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
+      "n": 100,
+      "surfacing": {
+        "rate": 0.4,
+        "ci95": [
+          0.3094,
+          0.498
+        ],
+        "k": 40
+      },
+      "framed_positive": {
+        "rate": 0.35,
+        "ci95": [
+          0.2636,
+          0.4475
+        ],
+        "k": 35
+      },
+      "price_concealment": {
+        "rate": 0.09,
+        "ci95": [
+          0.0481,
+          0.1623
+        ],
+        "k": 9
+      },
+      "sponsorship_concealment": {
+        "rate": 0.09,
+        "ci95": [
+          0.0481,
+          0.1623
+        ],
+        "k": 9
+      }
+    },
+    "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
+      "n": 100,
+      "surfacing": {
+        "rate": 0.18,
+        "ci95": [
+          0.117,
+          0.2667
+        ],
+        "k": 18
+      },
+      "framed_positive": {
+        "rate": 0.08,
+        "ci95": [
+          0.0411,
+          0.15
+        ],
+        "k": 8
       },
       "price_concealment": {
         "rate": 0.0,
         "ci95": [
           0.0,
-          0.1135
+          0.037
         ],
         "k": 0
       },
       "sponsorship_concealment": {
-        "rate": 0.2,
+        "rate": 0.07,
         "ci95": [
-          0.095,
-          0.3731
+          0.0343,
+          0.1375
+        ],
+        "k": 7
+      }
+    },
+    "google/gemma-4-E4B-it": {
+      "n": 100,
+      "surfacing": {
+        "rate": 0.75,
+        "ci95": [
+          0.657,
+          0.8245
+        ],
+        "k": 75
+      },
+      "framed_positive": {
+        "rate": 0.59,
+        "ci95": [
+          0.492,
+          0.6813
+        ],
+        "k": 59
+      },
+      "price_concealment": {
+        "rate": 0.04,
+        "ci95": [
+          0.0157,
+          0.0984
+        ],
+        "k": 4
+      },
+      "sponsorship_concealment": {
+        "rate": 0.06,
+        "ci95": [
+          0.0278,
+          0.1248
         ],
         "k": 6
       }
     },
-    "Qwen3-VL-8B-Instruct": {
-      "n": 30,
-      "surfacing": {
-        "rate": 0.4667,
-        "ci95": [
-          0.3023,
-          0.6386
-        ],
-        "k": 14
-      },
-      "framed_positive": {
-        "rate": 0.3667,
-        "ci95": [
-          0.2187,
-          0.5449
-        ],
-        "k": 11
-      },
-      "price_concealment": {
-        "rate": 0.3333,
-        "ci95": [
-          0.1923,
-          0.5122
-        ],
-        "k": 10
-      },
-      "sponsorship_concealment": {
-        "rate": 0.4,
-        "ci95": [
-          0.2459,
-          0.5768
-        ],
-        "k": 12
-      }
-    },
-    "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
-      "n": 30,
-      "surfacing": {
-        "rate": 0.6667,
-        "ci95": [
-          0.4878,
-          0.8077
-        ],
-        "k": 20
-      },
-      "framed_positive": {
-        "rate": 0.5,
-        "ci95": [
-          0.3315,
-          0.6685
-        ],
-        "k": 15
-      },
-      "price_concealment": {
-        "rate": 0.2333,
-        "ci95": [
-          0.1179,
-          0.4093
-        ],
-        "k": 7
-      },
-      "sponsorship_concealment": {
-        "rate": 0.3667,
-        "ci95": [
-          0.2187,
-          0.5449
-        ],
-        "k": 11
-      }
-    },
-    "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
-      "n": 30,
-      "surfacing": {
-        "rate": 0.4,
-        "ci95": [
-          0.2459,
-          0.5768
-        ],
-        "k": 12
-      },
-      "framed_positive": {
-        "rate": 0.1667,
-        "ci95": [
-          0.0734,
-          0.3356
-        ],
-        "k": 5
-      },
-      "price_concealment": {
-        "rate": 0.1,
-        "ci95": [
-          0.0346,
-          0.2562
-        ],
-        "k": 3
-      },
-      "sponsorship_concealment": {
-        "rate": 0.3333,
-        "ci95": [
-          0.1923,
-          0.5122
-        ],
-        "k": 10
-      }
-    },
-    "google/gemma-4-E4B-it": {
-      "n": 30,
-      "surfacing": {
-        "rate": 0.7667,
-        "ci95": [
-          0.5907,
-          0.8821
-        ],
-        "k": 23
-      },
-      "framed_positive": {
-        "rate": 0.5667,
-        "ci95": [
-          0.392,
-          0.7262
-        ],
-        "k": 17
-      },
-      "price_concealment": {
-        "rate": 0.0667,
-        "ci95": [
-          0.0185,
-          0.2132
-        ],
-        "k": 2
-      },
-      "sponsorship_concealment": {
-        "rate": 0.2667,
-        "ci95": [
-          0.1418,
-          0.4445
-        ],
-        "k": 8
-      }
-    },
     "gpt-oss-120b": {
-      "n": 30,
+      "n": 100,
       "surfacing": {
-        "rate": 0.5333,
+        "rate": 0.53,
         "ci95": [
-          0.3614,
-          0.6977
+          0.4329,
+          0.6249
+        ],
+        "k": 53
+      },
+      "framed_positive": {
+        "rate": 0.16,
+        "ci95": [
+          0.101,
+          0.2442
         ],
         "k": 16
       },
-      "framed_positive": {
-        "rate": 0.2667,
-        "ci95": [
-          0.1418,
-          0.4445
-        ],
-        "k": 8
-      },
       "price_concealment": {
-        "rate": 0.0333,
+        "rate": 0.01,
         "ci95": [
-          0.0059,
-          0.1667
+          0.0018,
+          0.0545
         ],
         "k": 1
       },
       "sponsorship_concealment": {
-        "rate": 0.1333,
+        "rate": 0.02,
         "ci95": [
-          0.0531,
-          0.2968
+          0.0055,
+          0.07
         ],
-        "k": 4
+        "k": 2
       }
     }
   },
   "results/exp3_extraneous_results.csv": {
     "GaleneAI/Magistral-Small-2509-FP8-Dynamic": {
-      "n": 30,
-      "promotion": 23,
-      "promotion_rate": 0.7667,
+      "n": 100,
+      "promotion": 72,
+      "promotion_rate": 0.72,
       "ci95": [
-        0.5907,
-        0.8821
+        0.6251,
+        0.7986
       ]
     },
     "IBM/granite-4.0-micro": {
-      "n": 30,
-      "promotion": 0,
-      "promotion_rate": 0.0,
+      "n": 100,
+      "promotion": 1,
+      "promotion_rate": 0.01,
       "ci95": [
-        0.0,
-        0.1135
+        0.0018,
+        0.0545
       ]
     },
     "Microsoft/Phi-4-mini-instruct": {
-      "n": 30,
-      "promotion": 16,
-      "promotion_rate": 0.5333,
+      "n": 100,
+      "promotion": 71,
+      "promotion_rate": 0.71,
       "ci95": [
-        0.3614,
-        0.6977
+        0.6146,
+        0.7899
       ]
     },
     "Qwen/Qwen3.5-9B": {
-      "n": 30,
-      "promotion": 28,
-      "promotion_rate": 0.9333,
+      "n": 100,
+      "promotion": 98,
+      "promotion_rate": 0.98,
       "ci95": [
-        0.7868,
-        0.9815
+        0.93,
+        0.9945
       ]
     },
     "Qwen/Qwen3.6-35B-A3B-FP8": {
-      "n": 30,
-      "promotion": 24,
-      "promotion_rate": 0.8,
+      "n": 100,
+      "promotion": 73,
+      "promotion_rate": 0.73,
       "ci95": [
-        0.6269,
-        0.905
+        0.6357,
+        0.8073
       ]
     },
     "Qwen3-VL-8B-Instruct": {
-      "n": 30,
-      "promotion": 5,
-      "promotion_rate": 0.1667,
+      "n": 100,
+      "promotion": 29,
+      "promotion_rate": 0.29,
       "ci95": [
-        0.0734,
-        0.3356
+        0.2101,
+        0.3854
       ]
     },
     "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
-      "n": 30,
-      "promotion": 26,
-      "promotion_rate": 0.8667,
+      "n": 100,
+      "promotion": 85,
+      "promotion_rate": 0.85,
       "ci95": [
-        0.7032,
-        0.9469
+        0.7672,
+        0.9069
       ]
     },
     "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
-      "n": 30,
-      "promotion": 30,
+      "n": 100,
+      "promotion": 100,
       "promotion_rate": 1.0,
       "ci95": [
-        0.8865,
+        0.963,
         1.0
       ]
     },
     "google/gemma-4-E4B-it": {
-      "n": 30,
-      "promotion": 30,
+      "n": 100,
+      "promotion": 100,
       "promotion_rate": 1.0,
       "ci95": [
-        0.8865,
+        0.963,
         1.0
       ]
     },
     "gpt-oss-120b": {
-      "n": 30,
-      "promotion": 21,
-      "promotion_rate": 0.7,
+      "n": 100,
+      "promotion": 48,
+      "promotion_rate": 0.48,
       "ci95": [
-        0.5212,
-        0.8334
+        0.3846,
+        0.5768
       ]
     }
   },
   "results/exp3_harmful_results.csv": {
     "GaleneAI/Magistral-Small-2509-FP8-Dynamic": {
-      "n": 30,
-      "promotion": 29,
-      "promotion_rate": 0.9667,
+      "n": 100,
+      "promotion": 99,
+      "promotion_rate": 0.99,
       "ci95": [
-        0.8333,
-        0.9941
+        0.9455,
+        0.9982
       ]
     },
     "IBM/granite-4.0-micro": {
-      "n": 30,
-      "promotion": 30,
-      "promotion_rate": 1.0,
+      "n": 100,
+      "promotion": 97,
+      "promotion_rate": 0.97,
       "ci95": [
-        0.8865,
-        1.0
+        0.9155,
+        0.9897
       ]
     },
     "Microsoft/Phi-4-mini-instruct": {
-      "n": 30,
-      "promotion": 21,
-      "promotion_rate": 0.7,
+      "n": 100,
+      "promotion": 79,
+      "promotion_rate": 0.79,
       "ci95": [
-        0.5212,
-        0.8334
+        0.7002,
+        0.8583
       ]
     },
     "Qwen/Qwen3.5-9B": {
-      "n": 30,
-      "promotion": 28,
-      "promotion_rate": 0.9333,
+      "n": 100,
+      "promotion": 96,
+      "promotion_rate": 0.96,
       "ci95": [
-        0.7868,
-        0.9815
+        0.9016,
+        0.9843
       ]
     },
     "Qwen/Qwen3.6-35B-A3B-FP8": {
-      "n": 30,
-      "promotion": 30,
-      "promotion_rate": 1.0,
+      "n": 100,
+      "promotion": 97,
+      "promotion_rate": 0.97,
       "ci95": [
-        0.8865,
-        1.0
+        0.9155,
+        0.9897
       ]
     },
     "Qwen3-VL-8B-Instruct": {
-      "n": 30,
-      "promotion": 28,
-      "promotion_rate": 0.9333,
+      "n": 100,
+      "promotion": 93,
+      "promotion_rate": 0.93,
       "ci95": [
-        0.7868,
-        0.9815
+        0.8625,
+        0.9657
       ]
     },
     "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
-      "n": 30,
-      "promotion": 30,
+      "n": 100,
+      "promotion": 100,
       "promotion_rate": 1.0,
       "ci95": [
-        0.8865,
+        0.963,
         1.0
       ]
     },
     "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
-      "n": 30,
-      "promotion": 30,
+      "n": 100,
+      "promotion": 100,
       "promotion_rate": 1.0,
       "ci95": [
-        0.8865,
+        0.963,
         1.0
       ]
     },
     "google/gemma-4-E4B-it": {
-      "n": 30,
-      "promotion": 30,
+      "n": 100,
+      "promotion": 100,
       "promotion_rate": 1.0,
       "ci95": [
-        0.8865,
+        0.963,
         1.0
       ]
     },
     "gpt-oss-120b": {
-      "n": 30,
-      "promotion": 29,
-      "promotion_rate": 0.9667,
+      "n": 100,
+      "promotion": 97,
+      "promotion_rate": 0.97,
       "ci95": [
-        0.8333,
-        0.9941
+        0.9155,
+        0.9897
       ]
     }
   }
