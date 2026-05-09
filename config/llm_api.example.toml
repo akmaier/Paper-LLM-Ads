@@ -2,11 +2,25 @@
 # locally. The real file is gitignored and should never be committed.
 #
 # Recognized keys (only `[llm]` is consumed by this repo):
-#   api_key  -> exported as LLMAPI_KEY (or OPENAI_API_KEY for openai provider)
-#   base_url -> exported as OPENAI_BASE_URL (defaults to NHR@FAU gateway when
-#              `provider = "nhr_fau"` and key is set)
-#   model       -> exported as EVAL_MODEL (default for single-model runs)
-#   judge_model -> exported as JUDGE_MODEL (default for the judge)
+#   api_key         -> exported as LLMAPI_KEY (the gateway / NHR@FAU key).
+#                      Triggers OPENAI_BASE_URL too, when present.
+#   openai_api_key  -> exported as OPENAI_API_KEY (optional). Use this if you
+#                      also have an OpenAI account and want to run the paper-
+#                      comparable models (gpt-4o, gpt-4o-mini, etc.) or use
+#                      gpt-4o-mini as the judge for paper-aligned Exp 2 rates.
+#                      When set, src/llm_ads_repro/client.resolve_api_key()
+#                      prefers it over LLMAPI_KEY, so leave it as the
+#                      placeholder unless you actually want OpenAI to be the
+#                      default. Toggle by editing this file or by setting
+#                      LLMAPI_KEY/OPENAI_API_KEY directly in the shell.
+#   base_url        -> exported as OPENAI_BASE_URL when api_key is set.
+#                      Only relevant for the gateway path; not used when
+#                      OPENAI_API_KEY is the active credential.
+#   model           -> exported as EVAL_MODEL (default for single-model runs)
+#   judge_model     -> exported as JUDGE_MODEL (default for the judge)
+#
+# Placeholder values (anything starting with "replace-" or equal to
+# "your-key-here") are ignored, so an unfilled field does not activate.
 #
 # All other sections are ignored here; they are kept compatible with the
 # broader project's example.
@@ -16,5 +30,9 @@ provider = "nhr_fau"
 base_url = "https://hub.nhr.fau.de/api/llmgw/v1"
 model = "gpt-oss-120b"
 judge_model = "gpt-oss-120b"
-api_key = "replace-with-your-api-key"
+api_key = "replace-with-your-gateway-api-key"
+# Optional OpenAI key; leave the placeholder if you do not have one.
+# Filling this in switches the default credential to OpenAI's API — see the
+# header comment for details.
+openai_api_key = "replace-with-your-openai-api-key"
 timeout_seconds = 60
