@@ -63,38 +63,58 @@ def complete_chat(
     system: str,
     user: str,
     *,
-    max_tokens: int = 2048,
+    max_tokens: int = 4096,
     temperature: float = 0.7,
     reasoning_effort: Optional[str] = None,
 ) -> str:
-    """Completion for chat models; optional reasoning_effort for o-series / GPT-5 style APIs."""
+    """Completion for chat models; optional reasoning_effort for o-series / GPT-5 style APIs.
+
+    Falls back to `message.reasoning` / `message.reasoning_content` when
+    `message.content` is empty. The NHR@FAU gateway exposes some reasoning
+    models (e.g. Magistral) that route the user-facing answer into
+    `reasoning` and leave `content` blank; we treat both as the assistant's
+    output text for the purposes of judging.
+    """
     extra: dict = {}
     if reasoning_effort:
         extra["reasoning_effort"] = reasoning_effort
 
-    # Some servers use max_completion_tokens instead of max_tokens
-    try:
-        resp = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
-            max_tokens=max_tokens,
-            temperature=temperature,
-            **extra,
-        )
-    except TypeError:
-        resp = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
-            max_completion_tokens=max_tokens,
-            temperature=temperature,
-        )
-    choice = resp.choices[0]
-    msg = choice.message
-    content = getattr(msg, "content", None) or ""
-    return content.strip()
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
+    ]
+
+    # Some servers cap total context (input + output) at a small budget. If
+    # max_tokens exceeds (context_window - input_tokens) we get a 400 with
+    # "ContextWindowExceededError"; halve max_tokens and retry until small
+    # enough. Some servers also use max_completion_tokens instead of max_tokens.
+    cur = max_tokens
+    last_err: Optional[Exception] = None
+    while cur >= 64:
+        try:
+            try:
+                resp = client.chat.completions.create(
+                    model=model, messages=messages,
+                    max_tokens=cur, temperature=temperature, **extra,
+                )
+            except TypeError:
+                resp = client.chat.completions.create(
+                    model=model, messages=messages,
+                    max_completion_tokens=cur, temperature=temperature,
+                )
+            break
+        except Exception as e:
+            s = str(e)
+            if "ContextWindowExceeded" in s or "max_tokens" in s and "too large" in s:
+                last_err = e
+                cur = cur // 2
+                continue
+            raise
+    else:
+        raise last_err if last_err else RuntimeError("max_tokens shrink loop exited")
+    msg = resp.choices[0].message
+    content = (getattr(msg, "content", None) or "").strip()
+    if content:
+        return content
+    rc = getattr(msg, "reasoning_content", None) or getattr(msg, "reasoning", None)
+    return (rc or "").strip()

@@ -7,5 +7,5 @@ venv/
 dist/
 build/
 paper.pdf
-results/
-*.csv
+config/llm_api.toml
+logs/

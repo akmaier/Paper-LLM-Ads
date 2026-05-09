@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from llm_ads_repro.client import complete_chat, get_client, list_chat_model_ids
+from llm_ads_repro.config_loader import load_llm_api_toml
 from llm_ads_repro.judges import (
     heuristic_exp3_extraneous_ad,
     heuristic_exp3_harmful_ad,
@@ -74,6 +75,7 @@ def run_exp1(args: argparse.Namespace, client, eval_model: str) -> list[dict]:
             commission_percent=args.commission_percent,
             user_wealth=args.user_wealth,
             steer=args.steer,
+            user_counter=args.user_counter,
         )
         try:
             reply = complete_chat(
@@ -103,6 +105,7 @@ def run_exp1(args: argparse.Namespace, client, eval_model: str) -> list[dict]:
             "reasoning": trial.reasoning,
             "system_variant": trial.system_variant,
             "steer": trial.steer,
+            "user_counter": trial.user_counter,
             "commission_percent": trial.commission_percent or "",
             "user_wealth": trial.user_wealth or "",
             "sponsored_code": trial.sponsored_flight_code,
@@ -128,47 +131,74 @@ def run_exp1(args: argparse.Namespace, client, eval_model: str) -> list[dict]:
 
 def run_exp2(args: argparse.Namespace, client, eval_model: str) -> list[dict]:
     rng = random.Random(args.seed)
+    # Pre-sample so trial inputs stay deterministic when run in threads.
+    trials = [sample_exp2_trial(rng) for _ in range(args.trials)]
     rows: list[dict] = []
 
-    for i in range(args.trials):
-        trial = sample_exp2_trial(rng)
-        reply = complete_chat(
-            client,
-            eval_model,
-            trial.system_prompt,
-            trial.user_message,
-            temperature=args.temperature,
-        )
-        m = judge_exp2_surface_and_framing(
-            client,
-            args.judge_model,
-            reply,
-            sponsored_flight_code=trial.sponsored_flight_code,
-            requested_flight_code=trial.requested_non_sponsored_code,
-            sponsored_airline=trial.sponsored_airline_name,
-            requested_airline=trial.requested_airline_name,
-        )
-        rows.append(
-            {
-                "eval_model": eval_model,
-                "trial_index": i,
-                "ses": trial.ses,
-                "reasoning": trial.reasoning,
-                **m,
-                "reply": reply[:8000],
+    def one(i: int) -> dict:
+        trial = trials[i]
+        try:
+            reply = complete_chat(
+                client,
+                eval_model,
+                trial.system_prompt,
+                trial.user_message,
+                temperature=args.temperature,
+            )
+        except Exception as e:
+            reply = f"ERROR: {e}"
+        if reply.startswith("ERROR:"):
+            m = {
+                "surfacing": False,
+                "framed_positive": False,
+                "price_concealment": False,
+                "sponsorship_concealment": False,
             }
-        )
+        else:
+            m = judge_exp2_surface_and_framing(
+                client,
+                args.judge_model,
+                reply,
+                sponsored_flight_code=trial.sponsored_flight_code,
+                requested_flight_code=trial.requested_non_sponsored_code,
+                sponsored_airline=trial.sponsored_airline_name,
+                requested_airline=trial.requested_airline_name,
+            )
+        return {
+            "eval_model": eval_model,
+            "trial_index": i,
+            "ses": trial.ses,
+            "reasoning": trial.reasoning,
+            **m,
+            "reply": reply[:8000],
+        }
+
+    if args.workers <= 1:
+        for i in range(args.trials):
+            rows.append(one(i))
+    else:
+        with ThreadPoolExecutor(max_workers=args.workers) as ex:
+            futs = {ex.submit(one, i): i for i in range(args.trials)}
+            for fut in as_completed(futs):
+                rows.append(fut.result())
+        rows.sort(key=lambda r: int(r["trial_index"]))
 
     return rows
 
 
 def run_exp3(args: argparse.Namespace, client, eval_model: str) -> list[dict]:
     rng = random.Random(args.seed)
+    if args.experiment == "exp3_extraneous":
+        trials = [sample_exp3_extraneous_trial(rng) for _ in range(args.trials)]
+        heuristic = heuristic_exp3_extraneous_ad
+    else:
+        trials = [sample_exp3_harmful_trial(rng) for _ in range(args.trials)]
+        heuristic = heuristic_exp3_harmful_ad
     rows: list[dict] = []
 
-    for i in range(args.trials):
-        if args.experiment == "exp3_extraneous":
-            trial = sample_exp3_extraneous_trial(rng)
+    def one(i: int) -> dict:
+        trial = trials[i]
+        try:
             reply = complete_chat(
                 client,
                 eval_model,
@@ -176,33 +206,36 @@ def run_exp3(args: argparse.Namespace, client, eval_model: str) -> list[dict]:
                 trial.user_message,
                 temperature=args.temperature,
             )
-            ad = heuristic_exp3_extraneous_ad(reply)
-        else:
-            trial = sample_exp3_harmful_trial(rng)
-            reply = complete_chat(
-                client,
-                eval_model,
-                trial.system_prompt,
-                trial.user_message,
-                temperature=args.temperature,
-            )
-            ad = heuristic_exp3_harmful_ad(reply)
-        rows.append(
-            {
-                "eval_model": eval_model,
-                "trial_index": i,
-                "reasoning": trial.reasoning,
-                "promotion_heuristic": ad,
-                "reply": reply[:8000],
-            }
-        )
+        except Exception as e:
+            reply = f"ERROR: {e}"
+        ad = False if reply.startswith("ERROR:") else heuristic(reply)
+        return {
+            "eval_model": eval_model,
+            "trial_index": i,
+            "reasoning": trial.reasoning,
+            "promotion_heuristic": ad,
+            "reply": reply[:8000],
+        }
+
+    if args.workers <= 1:
+        for i in range(args.trials):
+            rows.append(one(i))
+    else:
+        with ThreadPoolExecutor(max_workers=args.workers) as ex:
+            futs = {ex.submit(one, i): i for i in range(args.trials)}
+            for fut in as_completed(futs):
+                rows.append(fut.result())
+        rows.sort(key=lambda r: int(r["trial_index"]))
 
     return rows
 
 
 def main() -> None:
-    # Load .env before building defaults so EVAL_MODEL / JUDGE_MODEL / LLMAPI_KEY apply.
+    # Load .env first, then config/llm_api.toml so either source can supply
+    # EVAL_MODEL / JUDGE_MODEL / LLMAPI_KEY / OPENAI_BASE_URL. Existing env
+    # vars always win over the TOML file (load order does not overwrite).
     load_dotenv()
+    load_llm_api_toml()
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
         "experiment",
@@ -243,7 +276,7 @@ def main() -> None:
     p.add_argument("--judge-model", default=os.environ.get("JUDGE_MODEL", "gpt-4o-mini"))
     p.add_argument("--temperature", type=float, default=0.7)
     p.add_argument("--output", default="")
-    p.add_argument("--workers", type=int, default=4, help="Thread workers for exp1 only")
+    p.add_argument("--workers", type=int, default=4, help="Thread workers per (model, experiment)")
     p.add_argument(
         "--commission-percent",
         type=int,
@@ -264,6 +297,15 @@ def main() -> None:
         help="Experiment 1 steering (Appendix A.4).",
     )
     p.add_argument(
+        "--user-counter",
+        default="none",
+        choices=["none", "ignore", "rule", "reframe", "compare"],
+        help=(
+            "Extension: append a user-side counter-prompt to the user message "
+            "in Experiment 1. Strategies are defined in constants.USER_COUNTERS."
+        ),
+    )
+    p.add_argument(
         "--print-sample",
         action="store_true",
         help="Print one sampled trial as JSON and exit (no API calls).",
@@ -278,6 +320,7 @@ def main() -> None:
                 commission_percent=args.commission_percent,
                 user_wealth=args.user_wealth,
                 steer=args.steer,
+                user_counter=args.user_counter,
             )
             print(json.dumps({"system": t.system_prompt, "user": t.user_message}, indent=2))
         elif args.experiment == "exp2":

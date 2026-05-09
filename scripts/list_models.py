@@ -12,10 +12,12 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from llm_ads_repro.client import get_client, list_chat_model_ids
+from llm_ads_repro.config_loader import load_llm_api_toml
 
 
 def main() -> None:
     load_dotenv()
+    load_llm_api_toml()
     client = get_client()
     ids = list_chat_model_ids(client)
     print(json.dumps({"base_url": str(client.base_url), "models": ids}, indent=2))

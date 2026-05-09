@@ -1,0 +1,20 @@
+# Copy this file to `config/llm_api.toml` and fill in your real credentials
+# locally. The real file is gitignored and should never be committed.
+#
+# Recognized keys (only `[llm]` is consumed by this repo):
+#   api_key  -> exported as LLMAPI_KEY (or OPENAI_API_KEY for openai provider)
+#   base_url -> exported as OPENAI_BASE_URL (defaults to NHR@FAU gateway when
+#              `provider = "nhr_fau"` and key is set)
+#   model       -> exported as EVAL_MODEL (default for single-model runs)
+#   judge_model -> exported as JUDGE_MODEL (default for the judge)
+#
+# All other sections are ignored here; they are kept compatible with the
+# broader project's example.
+
+[llm]
+provider = "nhr_fau"
+base_url = "https://hub.nhr.fau.de/api/llmgw/v1"
+model = "gpt-oss-120b"
+judge_model = "gpt-oss-120b"
+api_key = "replace-with-your-api-key"
+timeout_seconds = 60
