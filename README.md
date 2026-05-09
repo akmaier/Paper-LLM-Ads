@@ -27,7 +27,7 @@ curl -L -o paper.pdf "https://arxiv.org/pdf/2604.08525"
 
 **Differences from the paper (explicit):**
 
-- **Models:** The authors ran **23 proprietary and open models** (App. B). Here you supply **any OpenAI-compatible endpoint** via `OPENAI_API_KEY` / `OPENAI_BASE_URL` or **[NHR@FAU / RRZE](https://hpc.fau.de/request-llm-api-key/)** `LLMAPI_KEY` (auto default base URL) and `--model`, `--models`, or `--models-from-endpoint`.
+- **Models:** The authors ran **23 proprietary and open models** (App. B). Here you supply **any OpenAI-compatible endpoint** via `OPENAI_API_KEY` / `OPENAI_BASE_URL`, or an `LLMAPI_KEY` against an OpenAI-compatible gateway (auto default base URL when only `LLMAPI_KEY` is set), plus `--model`, `--models`, or `--models-from-endpoint`.
 - **Trial count:** The paper uses **100 trials** per (model × reasoning × SES) cell. Use `--trials 100` (or larger) to match; default in the script is small for cost control.
 - **Judgments:** Experiment 1 primary outcome is **which flight is recommended**. We use a **second LLM judge** (`--judge-model`, default `gpt-4o-mini`) with a JSON label rubric. The paper does not fully specify automated parsing; this is a practical reproducibility choice.
 - **Experiment 3 metrics:** The paper reports human-interpreted “advertisement rates”; we use **transparent string heuristics** (documented in `src/llm_ads_repro/judges.py`) so runs are cheap and repeatable. Swap in your own judge if you need closer alignment to their manual coding.
@@ -48,16 +48,17 @@ Optional: create `.env` with:
 OPENAI_API_KEY=sk-...
 # OPENAI_BASE_URL=https://...
 
-# Or NHR@FAU / RRZE (do not set OPENAI_API_KEY if you want auto default base URL)
+# Or any OpenAI-compatible gateway via LLMAPI_KEY (do not set OPENAI_API_KEY
+# if you want this repo's auto default base URL)
 # LLMAPI_KEY=sk-...
 
 EVAL_MODEL=gpt-4o-mini
 JUDGE_MODEL=gpt-4o-mini
 ```
 
-### NHR@FAU / RRZE (OpenAI-compatible LLM gateway)
+### OpenAI-compatible LLM gateway (`LLMAPI_KEY`)
 
-If you use an API key from [Request LLM API key (NHR@FAU)](https://hpc.fau.de/request-llm-api-key/), set **`LLMAPI_KEY`** in `.env` or your environment. When **`OPENAI_API_KEY` is not set**, this repo defaults **`OPENAI_BASE_URL`** to `https://hub.nhr.fau.de/api/llmgw/v1` so no extra URL is required. Override with **`OPENAI_BASE_URL`** or **`LLM_BASE_URL`** if your deployment differs.
+If you use an API key from an OpenAI-compatible gateway, set **`LLMAPI_KEY`** in `.env` or your environment. When **`OPENAI_API_KEY` is not set**, this repo defaults **`OPENAI_BASE_URL`** to a built-in gateway URL (see [src/llm_ads_repro/client.py](src/llm_ads_repro/client.py)) so no extra URL is required. Override with **`OPENAI_BASE_URL`** or **`LLM_BASE_URL`** if your deployment differs.
 
 **List models exposed by the gateway:**
 
