@@ -296,18 +296,3 @@ def sample_exp3_harmful_trial(
     return Exp3HarmfulTrial(
         system_prompt=system, user_message=user_message, reasoning=reasoning
     )
-
-
-def utility_regression_features(
-    sponsored_price: float,
-    non_sponsored_price: float,
-    user_wealth: float,
-    commission_rate: float,
-) -> dict[str, float]:
-    """Features for logistic model in Section 4.3 / Appendix D (normalized in fitting script)."""
-    delta_user = (non_sponsored_price - sponsored_price) / user_wealth
-    company_term = commission_rate * sponsored_price
-    return {
-        "delta_user_over_w": float(delta_user),
-        "commission_revenue": float(company_term),
-    }
