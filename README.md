@@ -233,6 +233,78 @@ The full per-trial CSVs and the per-model comparison
 ([results/counter_comparison.json](results/counter_comparison.json))
 are committed.
 
+## Limitations of the committed sample run
+
+The `results/*.csv` and `summary.json` reflect a single sweep against the
+particular OpenAI-compatible gateway available to us at run time. They are
+*illustrative*, not a faithful re-run of the paper. The main caveats:
+
+- **Judge model.** Every judge call (Experiment 1 label, Experiment 2
+  surfacing/framing/concealment) used **`gpt-oss-120b`** as the
+  `--judge-model`, on the same gateway. This single judge is held
+  constant across the baseline Exp 1 and all four counter sweeps so
+  the *deltas* between conditions are internally consistent, but the
+  **absolute** rates are tied to this one judge:
+  - The original paper does not fully specify how it parsed responses;
+    the script's default `--judge-model` is `gpt-4o-mini`. Neither
+    matches our choice.
+  - `gpt-oss-120b` is itself a reasoning model. Our 64-token judge
+    budget was the original repo's default and turned out to be far
+    too small for a reasoning judge (see commit a4a4bb2); using a
+    non-reasoning judge would change calibration again.
+  Re-running with `--judge-model gpt-4o-mini` (or whatever judge you
+  prefer) is one CLI flag away.
+
+- **Number of trials.** The paper uses **100 trials per
+  (model × reasoning × SES) cell**. Our sweep uses
+  **30 trials *total* per (model × experiment)**, randomized across
+  SES (high/low), reasoning style (direct/CoT), and the three Appendix
+  A.2 system-prompt variants. So our per-cell sample is roughly
+  30 / (2 × 2 × 3) ≈ 2–3 trials, far below the paper. Use
+  `--trials 100` (or larger) and a fixed `--seed` to match. We chose
+  30 to keep cost bounded; the per-model 95% Wilson intervals
+  reported in `summary.json` already absorb this.
+
+- **Model overlap with the paper's 23.** Our 10 chat models are simply
+  whatever the gateway's `/v1/models` endpoint exposed
+  ([scripts/list_models.py](scripts/list_models.py) prints the
+  current list). They are predominantly recent (2024–2025) open-weight
+  models — Qwen 3.5/3.6, Mistral Small 3.2, Gemma 3/4, IBM Granite 4,
+  Phi-4-mini, Magistral Small, gpt-oss-120b — and skew toward
+  open / small / quantized variants. We have **not** verified the
+  one-to-one overlap with the paper's Appendix B list of 23
+  proprietary and open models; given the gateway's catalog is
+  predominantly open and recent, the overlap is partial at best,
+  and several of our IDs (e.g. `Qwen3.6`, `Magistral-Small-2509`,
+  `granite-4.0-micro`) likely post-date the paper.
+
+- **Single seed.** Each condition was run once with the default
+  `--seed 0`. We did not estimate run-to-run variance via repeated
+  seeds. The aggregate Wilson 95% intervals therefore reflect only
+  binomial sampling under one seed, not seed variability.
+
+- **Experiment 3 metric.** Experiments 3a/3b use a transparent string
+  heuristic (presence of sponsor names / "payday loan" / "title
+  loan"), not the paper's human-coded advertisement rate.
+
+- **MATH problem pool.** Experiment 3a draws from a small fixed pool
+  (`MATH_SAMPLE_PROBLEMS` in `constants.py`), not the full Hendrycks
+  et al. MATH benchmark.
+
+- **Reasoning-content fallback.** Some gateway models route their
+  user-facing answer into `message.reasoning` and leave
+  `message.content` empty (Magistral does this). We treat both fields
+  as the assistant's output for judging
+  ([client.py](src/llm_ads_repro/client.py)). This is unavoidable to
+  get usable replies from those models, but it does mean their
+  "answer" is not separated from any chain-of-thought the model
+  emitted.
+
+The numbers in this README and in `results/` should be read as
+"what this gateway, this judge, this seed, and 30 trials say". Treat
+them as a reasonable replication signal for direction and ranking,
+not as a 1:1 substitute for the paper's reported rates.
+
 ### Reproducing the per-model summary
 
 `results/` contains the raw per-trial CSVs from a sample run on a 10-model
