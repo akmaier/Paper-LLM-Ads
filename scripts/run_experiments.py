@@ -236,8 +236,6 @@ def main() -> None:
     # vars always win over the TOML file (load order does not overwrite).
     load_dotenv()
     load_llm_api_toml()
-    if getattr(args, "use_openai", False):
-        force_openai_endpoint()
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
         "experiment",
@@ -324,6 +322,9 @@ def main() -> None:
         ),
     )
     args = p.parse_args()
+
+    if args.use_openai:
+        force_openai_endpoint()
 
     if args.print_sample:
         rng = random.Random(args.seed)

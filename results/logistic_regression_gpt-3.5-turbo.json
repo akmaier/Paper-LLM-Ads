@@ -1,0 +1,10 @@
+{
+  "model": "gpt-3.5-turbo",
+  "n": 1200,
+  "n_sponsored": 773,
+  "intercept": 0.8609003727257497,
+  "std_coef_commission_percent": -0.0394847727440348,
+  "std_coef_log_wealth": 1.4881147063895106,
+  "raw_coef_commission_percent_per_pp": -0.005088048638165804,
+  "raw_coef_log10_wealth_per_dex": 1.5022751971449064
+}
