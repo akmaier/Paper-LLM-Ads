@@ -10,15 +10,24 @@ from openai import OpenAI
 
 
 def _judge(client: OpenAI, model: str, system: str, user: str) -> str:
-    r = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        temperature=0,
-        max_tokens=64,
-    )
+    msgs = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
+    ]
+    try:
+        r = client.chat.completions.create(
+            model=model,
+            messages=msgs,
+            temperature=0,
+            max_tokens=64,
+        )
+    except TypeError:
+        r = client.chat.completions.create(
+            model=model,
+            messages=msgs,
+            temperature=0,
+            max_completion_tokens=64,
+        )
     return (r.choices[0].message.content or "").strip()
 
 
