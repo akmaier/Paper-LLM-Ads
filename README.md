@@ -27,7 +27,7 @@ curl -L -o paper.pdf "https://arxiv.org/pdf/2604.08525"
 
 **Differences from the paper (explicit):**
 
-- **Models:** The authors ran **23 proprietary and open models** (App. B). Here you supply **any OpenAI-compatible endpoint** via `OPENAI_API_KEY` / `OPENAI_BASE_URL` and `--model`.
+- **Models:** The authors ran **23 proprietary and open models** (App. B). Here you supply **any OpenAI-compatible endpoint** via `OPENAI_API_KEY` / `OPENAI_BASE_URL` or **[NHR@FAU / RRZE](https://hpc.fau.de/request-llm-api-key/)** `LLMAPI_KEY` (auto default base URL) and `--model`, `--models`, or `--models-from-endpoint`.
 - **Trial count:** The paper uses **100 trials** per (model × reasoning × SES) cell. Use `--trials 100` (or larger) to match; default in the script is small for cost control.
 - **Judgments:** Experiment 1 primary outcome is **which flight is recommended**. We use a **second LLM judge** (`--judge-model`, default `gpt-4o-mini`) with a JSON label rubric. The paper does not fully specify automated parsing; this is a practical reproducibility choice.
 - **Experiment 3 metrics:** The paper reports human-interpreted “advertisement rates”; we use **transparent string heuristics** (documented in `src/llm_ads_repro/judges.py`) so runs are cheap and repeatable. Swap in your own judge if you need closer alignment to their manual coding.
@@ -44,12 +44,57 @@ pip install -r requirements.txt
 Optional: create `.env` with:
 
 ```bash
+# OpenAI or other gateway
 OPENAI_API_KEY=sk-...
-# Optional: Azure, OpenRouter, local vLLM, etc.
 # OPENAI_BASE_URL=https://...
+
+# Or NHR@FAU / RRZE (do not set OPENAI_API_KEY if you want auto default base URL)
+# LLMAPI_KEY=sk-...
+
 EVAL_MODEL=gpt-4o-mini
 JUDGE_MODEL=gpt-4o-mini
 ```
+
+### NHR@FAU / RRZE (OpenAI-compatible LLM gateway)
+
+If you use an API key from [Request LLM API key (NHR@FAU)](https://hpc.fau.de/request-llm-api-key/), set **`LLMAPI_KEY`** in `.env` or your environment. When **`OPENAI_API_KEY` is not set**, this repo defaults **`OPENAI_BASE_URL`** to `https://hub.nhr.fau.de/api/llmgw/v1` so no extra URL is required. Override with **`OPENAI_BASE_URL`** or **`LLM_BASE_URL`** if your deployment differs.
+
+**List models exposed by the gateway:**
+
+```bash
+PYTHONPATH=src python3 scripts/list_models.py
+# or
+PYTHONPATH=src python3 scripts/run_experiments.py exp1 --list-models
+```
+
+**Run Experiment 1 on every gateway model** (same `--trials` per model; results merged into one CSV with an `eval_model` column):
+
+```bash
+PYTHONPATH=src python3 scripts/run_experiments.py exp1 \
+  --models-from-endpoint \
+  --trials 20 \
+  --judge-model <a-model-id-from-the-list>
+```
+
+**Subset with a regex** (e.g. only ids containing `gpt`):
+
+```bash
+PYTHONPATH=src python3 scripts/run_experiments.py exp2 \
+  --models-from-endpoint \
+  --models-filter 'gpt' \
+  --trials 10 \
+  --judge-model gpt-oss-120b
+```
+
+**Explicit list:**
+
+```bash
+PYTHONPATH=src python3 scripts/run_experiments.py exp1 \
+  --models "model-a,model-b" \
+  --trials 50
+```
+
+Pick **`JUDGE_MODEL`** / `--judge-model` from the same gateway; judging uses chat completions on that id. Set **`EVAL_MODEL`** when you use a single `--model` default.
 
 ## Inspect prompts (no API calls)
 
@@ -125,7 +170,8 @@ PYTHONPATH=src python3 -m pytest tests/ -q
 - `src/llm_ads_repro/trial_sampling.py` — Randomization protocol (sponsor set, prices, personas).
 - `src/llm_ads_repro/client.py` — OpenAI-compatible chat completion.
 - `src/llm_ads_repro/judges.py` — Judging and Experiment 3 heuristics.
-- `scripts/run_experiments.py` — CLI runner and CSV export.
+- `scripts/run_experiments.py` — CLI runner and CSV export (multi-model flags, `--list-models`).
+- `scripts/list_models.py` — Print `/v1/models` as JSON (same credentials as experiments).
 - `scripts/fit_logistic_regression.py` — Optional logistic fit on CSV.
 
 ## Citation
