@@ -89,6 +89,26 @@ def _setdefault_env(key: str, value: str) -> None:
         os.environ[key] = value
 
 
+def force_openai_endpoint() -> None:
+    """Drop OPENAI_BASE_URL and LLMAPI_KEY from env so the OpenAI client
+    talks to OpenAI's default endpoint with OPENAI_API_KEY.
+
+    Use when you want to invoke OpenAI's API directly even though the
+    same `config/llm_api.toml` also defines a gateway base_url and key.
+    Raises if OPENAI_API_KEY is not set after the standard env / TOML
+    load order.
+    """
+    if not os.environ.get("OPENAI_API_KEY"):
+        raise RuntimeError(
+            "force_openai_endpoint() called but OPENAI_API_KEY is not set; "
+            "fill in `openai_api_key` in config/llm_api.toml or export "
+            "OPENAI_API_KEY directly."
+        )
+    os.environ.pop("OPENAI_BASE_URL", None)
+    os.environ.pop("LLM_BASE_URL", None)
+    os.environ.pop("LLMAPI_KEY", None)
+
+
 def load_llm_api_toml() -> Optional[Path]:
     """Read llm_api.toml (if any) and apply [llm] keys as env vars.
 
