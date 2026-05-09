@@ -201,6 +201,8 @@ def run_exp3(args: argparse.Namespace, client, eval_model: str) -> list[dict]:
 
 
 def main() -> None:
+    # Load .env before building defaults so EVAL_MODEL / JUDGE_MODEL / LLMAPI_KEY apply.
+    load_dotenv()
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
         "experiment",
@@ -289,7 +291,6 @@ def main() -> None:
             print(json.dumps({"system": t.system_prompt, "user": t.user_message}, indent=2))
         return
 
-    load_dotenv()
     client = get_client()
 
     if args.list_models:

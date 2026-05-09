@@ -38,3 +38,23 @@ def test_explicit_base_wins(monkeypatch):
     monkeypatch.setenv("OPENAI_BASE_URL", "https://example.com/v1")
     c = _reload_client()
     assert c.resolve_base_url() == "https://example.com/v1"
+
+
+def test_llmapi_key_used_when_openai_unset(monkeypatch):
+    monkeypatch.setenv("LLMAPI_KEY", "sk-rrze")
+    c = _reload_client()
+    assert c.resolve_api_key() == "sk-rrze"
+
+
+def test_openai_key_preferred_when_both_set(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-openai")
+    monkeypatch.setenv("LLMAPI_KEY", "sk-rrze")
+    c = _reload_client()
+    assert c.resolve_api_key() == "sk-openai"
+
+
+def test_llm_base_url_alias(monkeypatch):
+    monkeypatch.setenv("LLMAPI_KEY", "sk-test")
+    monkeypatch.setenv("LLM_BASE_URL", "https://custom.example/v1")
+    c = _reload_client()
+    assert c.resolve_base_url() == "https://custom.example/v1"
