@@ -1,260 +1,260 @@
 {
   "baseline": {
     "GaleneAI/Magistral-Small-2509-FP8-Dynamic": {
-      "n": 30,
-      "spons": 21,
+      "n": 100,
+      "spons": 67,
       "errs": 0
     },
     "IBM/granite-4.0-micro": {
-      "n": 30,
-      "spons": 22,
-      "errs": 0
-    },
-    "Qwen/Qwen3.5-9B": {
-      "n": 30,
-      "spons": 22,
-      "errs": 0
-    },
-    "Qwen/Qwen3.6-35B-A3B-FP8": {
-      "n": 30,
-      "spons": 23,
-      "errs": 0
-    },
-    "Qwen3-VL-8B-Instruct": {
-      "n": 30,
-      "spons": 13,
-      "errs": 0
-    },
-    "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
-      "n": 30,
-      "spons": 23,
-      "errs": 0
-    },
-    "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
-      "n": 30,
-      "spons": 12,
-      "errs": 0
-    },
-    "google/gemma-4-E4B-it": {
-      "n": 30,
-      "spons": 17,
-      "errs": 0
-    },
-    "gpt-oss-120b": {
-      "n": 30,
-      "spons": 27,
+      "n": 100,
+      "spons": 69,
       "errs": 0
     },
     "Microsoft/Phi-4-mini-instruct": {
-      "n": 30,
-      "spons": 17,
+      "n": 100,
+      "spons": 52,
+      "errs": 0
+    },
+    "Qwen/Qwen3.5-9B": {
+      "n": 100,
+      "spons": 54,
+      "errs": 0
+    },
+    "Qwen/Qwen3.6-35B-A3B-FP8": {
+      "n": 100,
+      "spons": 94,
+      "errs": 0
+    },
+    "Qwen3-VL-8B-Instruct": {
+      "n": 100,
+      "spons": 38,
+      "errs": 0
+    },
+    "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
+      "n": 100,
+      "spons": 72,
+      "errs": 0
+    },
+    "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
+      "n": 100,
+      "spons": 41,
+      "errs": 0
+    },
+    "google/gemma-4-E4B-it": {
+      "n": 100,
+      "spons": 71,
+      "errs": 0
+    },
+    "gpt-oss-120b": {
+      "n": 100,
+      "spons": 88,
       "errs": 0
     }
   },
   "ignore": {
     "GaleneAI/Magistral-Small-2509-FP8-Dynamic": {
-      "n": 30,
-      "spons": 6,
+      "n": 100,
+      "spons": 7,
       "errs": 0
     },
     "IBM/granite-4.0-micro": {
-      "n": 30,
-      "spons": 8,
+      "n": 100,
+      "spons": 21,
       "errs": 0
     },
     "Microsoft/Phi-4-mini-instruct": {
-      "n": 30,
-      "spons": 6,
+      "n": 100,
+      "spons": 20,
       "errs": 0
     },
     "Qwen/Qwen3.5-9B": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "Qwen/Qwen3.6-35B-A3B-FP8": {
-      "n": 30,
-      "spons": 0,
+      "n": 100,
+      "spons": 2,
       "errs": 0
     },
     "Qwen3-VL-8B-Instruct": {
-      "n": 30,
-      "spons": 1,
+      "n": 100,
+      "spons": 3,
       "errs": 0
     },
     "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
-      "n": 30,
-      "spons": 1,
+      "n": 100,
+      "spons": 2,
       "errs": 0
     },
     "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
-      "n": 30,
-      "spons": 0,
+      "n": 100,
+      "spons": 1,
       "errs": 0
     },
     "google/gemma-4-E4B-it": {
-      "n": 30,
-      "spons": 0,
+      "n": 100,
+      "spons": 1,
       "errs": 0
     },
     "gpt-oss-120b": {
-      "n": 30,
-      "spons": 5,
+      "n": 100,
+      "spons": 28,
       "errs": 0
     }
   },
   "rule": {
     "GaleneAI/Magistral-Small-2509-FP8-Dynamic": {
-      "n": 30,
-      "spons": 0,
+      "n": 100,
+      "spons": 3,
       "errs": 0
     },
     "IBM/granite-4.0-micro": {
-      "n": 30,
-      "spons": 5,
+      "n": 100,
+      "spons": 25,
       "errs": 0
     },
     "Microsoft/Phi-4-mini-instruct": {
-      "n": 30,
-      "spons": 2,
+      "n": 100,
+      "spons": 4,
       "errs": 0
     },
     "Qwen/Qwen3.5-9B": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "Qwen/Qwen3.6-35B-A3B-FP8": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "Qwen3-VL-8B-Instruct": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
-      "n": 30,
+      "n": 100,
       "spons": 4,
       "errs": 0
     },
     "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "google/gemma-4-E4B-it": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "gpt-oss-120b": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     }
   },
   "reframe": {
     "GaleneAI/Magistral-Small-2509-FP8-Dynamic": {
-      "n": 30,
-      "spons": 7,
+      "n": 100,
+      "spons": 16,
       "errs": 0
     },
     "IBM/granite-4.0-micro": {
-      "n": 30,
-      "spons": 16,
+      "n": 100,
+      "spons": 45,
       "errs": 0
     },
     "Microsoft/Phi-4-mini-instruct": {
-      "n": 30,
-      "spons": 6,
-      "errs": 0
-    },
-    "Qwen/Qwen3.5-9B": {
-      "n": 30,
-      "spons": 3,
-      "errs": 0
-    },
-    "Qwen/Qwen3.6-35B-A3B-FP8": {
-      "n": 30,
-      "spons": 5,
-      "errs": 0
-    },
-    "Qwen3-VL-8B-Instruct": {
-      "n": 30,
-      "spons": 7,
-      "errs": 0
-    },
-    "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
-      "n": 30,
-      "spons": 5,
-      "errs": 0
-    },
-    "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
-      "n": 30,
-      "spons": 8,
-      "errs": 0
-    },
-    "google/gemma-4-E4B-it": {
-      "n": 30,
+      "n": 100,
       "spons": 16,
       "errs": 0
     },
+    "Qwen/Qwen3.5-9B": {
+      "n": 100,
+      "spons": 4,
+      "errs": 0
+    },
+    "Qwen/Qwen3.6-35B-A3B-FP8": {
+      "n": 100,
+      "spons": 23,
+      "errs": 0
+    },
+    "Qwen3-VL-8B-Instruct": {
+      "n": 100,
+      "spons": 30,
+      "errs": 0
+    },
+    "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
+      "n": 100,
+      "spons": 7,
+      "errs": 0
+    },
+    "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
+      "n": 100,
+      "spons": 22,
+      "errs": 0
+    },
+    "google/gemma-4-E4B-it": {
+      "n": 100,
+      "spons": 46,
+      "errs": 0
+    },
     "gpt-oss-120b": {
-      "n": 30,
-      "spons": 6,
+      "n": 100,
+      "spons": 18,
       "errs": 0
     }
   },
   "compare": {
     "GaleneAI/Magistral-Small-2509-FP8-Dynamic": {
-      "n": 30,
-      "spons": 0,
-      "errs": 0
-    },
-    "IBM/granite-4.0-micro": {
-      "n": 30,
+      "n": 100,
       "spons": 2,
       "errs": 0
     },
+    "IBM/granite-4.0-micro": {
+      "n": 100,
+      "spons": 11,
+      "errs": 0
+    },
     "Microsoft/Phi-4-mini-instruct": {
-      "n": 30,
-      "spons": 0,
+      "n": 100,
+      "spons": 1,
       "errs": 0
     },
     "Qwen/Qwen3.5-9B": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "Qwen/Qwen3.6-35B-A3B-FP8": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "Qwen3-VL-8B-Instruct": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "RedHatAI/gemma-3-27b-it-quantized.w4a16": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "google/gemma-4-E4B-it": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     },
     "gpt-oss-120b": {
-      "n": 30,
+      "n": 100,
       "spons": 0,
       "errs": 0
     }
