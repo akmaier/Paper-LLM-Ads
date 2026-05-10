@@ -50,9 +50,9 @@ original to two decimals ($\alpha=0.86$), and 200 of 200 trials on
 \texttt{gpt-3.5-turbo} and \texttt{gpt-4o} promote a payday lender
 to a financially distressed user. Third, a thirty-token user prompt
 that asks the assistant for a neutral comparison table first cuts
-sponsored recommendation from $64.6\,\%$ to $1.4\,\%$ on our
-ten-model gateway aggregate, and from $77\,\%$ to $0\,\%$ on the
-OpenAI aggregate. AI literacy and price-comparison portals are
+sponsored recommendation from $64.6\,\%$ to $1.4\,\%$ averaged across
+our ten open-source models, and from $77\,\%$ to $0\,\%$ averaged
+across the two OpenAI models. AI literacy and price-comparison portals are
 likely market-level mitigations; the harmful-product cell is bounded
 by neither. Raw data, both judges' labels and analysis scripts are
 at \url{https://github.com/akmaier/Paper-LLM-Ads}.
@@ -113,17 +113,18 @@ Our contributions are four-fold. First, we provide an open-source,
 single-command re-implementation of the four experiments
 in~\cite{Wu26} and document, in Section~\ref{sec:rq1}, three silent
 failure modes that we encountered during a careful re-implementation,
-each invisible at the prose level of the original paper. Second, we sweep a 12-model pool of ten
-open-weight gateway models plus the two OpenAI rows that overlap with
-a present-day account, at one thousand trials per
+each invisible at the prose level of the original paper. Second, we sweep a twelve-model pool comprising ten open-source chat
+models plus the two OpenAI rows that overlap with a present-day
+account, at one thousand trials per
 $\langle$model, experiment$\rangle$ pair, with paired judging by an
 open-weight (\texttt{gpt-oss-120b}) and a paper-aligned
 (\texttt{gpt-4o-mini}) classifier; the central logistic-regression
 intercept of~\cite{Wu26}'s Section~4.3 replicates to two decimals.
 Third, we extend the original protocol with four user-side
-counter-prompts. The strongest cuts sponsored-recommendation rate by
-a factor of forty-six on the gateway aggregate and to zero on the
-OpenAI aggregate. Fourth, we close with a discussion of two
+counter-prompts. Averaged across our ten open-source models, the
+strongest counter cuts sponsored-recommendation rate by a factor of
+forty-six; averaged across the two OpenAI models, it cuts the rate
+to zero. Fourth, we close with a discussion of two
 market-level mitigations -- AI literacy and price-comparison
 aggregators -- and one residual cell where neither applies and where
 safety tuning, in the sense of~\cite{Bai22}, remains the only lever.
@@ -240,18 +241,21 @@ describes financial distress and the sponsors are payday lenders.
 
 \textbf{Trial count and seed.} We run \emph{exactly} $100$ trials per
 $\langle$model, experiment$\rangle$ pair under \texttt{seed=0},
-yielding $1{,}000$ rows per condition for the gateway sweep and
-$200$ rows per condition for the OpenAI sweep. The paper's Section~3
+yielding $1{,}000$ rows per condition pooled across the ten
+open-source models, and $200$ rows per condition pooled across the
+two OpenAI models. The paper's Section~3
 specifies $100$ trials per $\langle\text{model, reasoning,
 SES}\rangle$ cell. Our randomisation protocol pools across cells, so
 the per-cell sample is roughly $100/(2{\times}2{\times}3) \approx 8$
 trials -- below the paper's per-cell $n=100$ but with the tighter
-aggregate confidence intervals reported in Tables~\ref{tab:headline}
+confidence intervals reported in Tables~\ref{tab:headline}
 and~\ref{tab:counters_results}.
 
-\textbf{Models.} The gateway exposes ten chat-instruction models; we
-filter out the OCR and embedding endpoints (\texttt{LightOnOCR-2-1B},
-\texttt{vdr-2b-multi-v1}). Of the paper's four OpenAI
+\textbf{Models.} We had access to ten open-source chat-instruction
+models through an OpenAI-compatible API endpoint; we filter out the
+OCR and embedding-only ones (\texttt{LightOnOCR-2-1B},
+\texttt{vdr-2b-multi-v1}) and keep the remaining ten as our
+open-source pool. Of the paper's four OpenAI
 rows, \texttt{gpt-3.5-turbo} and \texttt{gpt-4o} are accessible from a
 present-day OpenAI account; \texttt{GPT-5.1} and \texttt{GPT-5~Mini}
 are gated and remain unreachable. All other paper rows (Grok, Gemini,
@@ -259,8 +263,9 @@ Claude, DeepSeek, Llama) are not on either credential.
 
 \textbf{Judges and judge ablation.} The paper uses GPT-4o as the
 binary judge in Section~5.1; we report all numbers under
-\texttt{gpt-oss-120b} (open-weight, on the same gateway as the
-evaluated models) and additionally re-judge every committed reply
+\texttt{gpt-oss-120b} (open-weight, accessed through the same API as
+the evaluated open-source models) and additionally re-judge every
+committed reply
 with \texttt{gpt-4o-mini} (the closest paper-aligned classifier
 available on a public account). Both labels are stored side-by-side
 and compared in Section~\ref{sec:rq2}. Across the entire pipeline a
@@ -303,8 +308,9 @@ $\sim\!65\,\%$.
 \texttt{Context\-Window\-Exceeded\-Error} for small-context models. \\
 \addlinespace
 Reasoning-only output ignored.
-& \texttt{message.content} arrives empty for several gateway models
-(Magistral, some Qwen variants) because the user-facing answer is
+& \texttt{message.content} arrives empty for several of the
+open-source models (Magistral, some Qwen variants) because the
+user-facing answer is
 routed into \texttt{message.reasoning}. The trial reply is stored as
 the empty string and never judged.
 & Fall back to \texttt{message.reasoning} when \texttt{content} is
@@ -386,8 +392,9 @@ part of the original paper's evaluation set.
 
 \begin{table}[t]
 \centering
-\caption{Per-model headline rates (gateway plus OpenAI overlap, $n=100$
-per cell). Exp~2 ``framed+\,$|$\,surf'' and ``spons.\,conc.\,$|$\,surf''
+\caption{Per-model headline rates (ten open-source models plus the
+two OpenAI overlap models, $n=100$ per cell). Exp~2
+``framed+\,$|$\,surf'' and ``spons.\,conc.\,$|$\,surf''
 are conditioned on having surfaced the sponsored alternative,
 matching paper Tables~3 and 4. Bold entries are the strongest cell
 in each column. Wilson 95\,\% CIs in
@@ -415,8 +422,8 @@ gemma-4-E4B-it                                &   0.71 &   0.75 &   0.79 &   0.0
 \texttt{gpt-3.5-turbo} (OpenAI)               &   0.61 &   0.27 & \textbf{1.00} & 0.56 & 0.58 & \textbf{1.00} \\
 \texttt{gpt-4o} (OpenAI)                      &   0.93 & \textbf{1.00} & 0.98 & 0.56 & 0.04 & \textbf{1.00} \\
 \midrule
-gateway aggregate ($n{=}1{,}000$)             &  0.646 &  0.433 &  0.767 &  0.166 &  0.677 &  0.958 \\
-OpenAI aggregate ($n{=}200$)                  &  0.770 &  0.635 &  0.984 &  0.560 &  0.310 &  1.000 \\
+10 open-source avg.\ ($n{=}1{,}000$)          &  0.646 &  0.433 &  0.767 &  0.166 &  0.677 &  0.958 \\
+2 OpenAI avg.\ ($n{=}200$)                    &  0.770 &  0.635 &  0.984 &  0.560 &  0.310 &  1.000 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -450,8 +457,9 @@ most striking:
       payday lender to a financially distressed user in
       $100/100$ trials. Aggregated over the two OpenAI models, the
       Exp~3b promotion rate is $200/200$ -- not a single refusal.
-      The gateway aggregate is $958/1{,}000$ ($95.8\,\%$). Both
-      paper-aligned and open-weight families share this failure.
+      Averaged across our ten open-source models the rate is
+      $958/1{,}000$ ($95.8\,\%$). Both paper-aligned and open-weight
+      families share this failure.
 \item \texttt{gpt-4o} surfaces the sponsored alternative in
       $100/100$ Exp~2 trials when the user has explicitly asked to
       book another airline, and frames it positively in $98/100$.
@@ -551,7 +559,8 @@ single-judge studies should be considered uncalibrated.}
 
 As we have argued in Section~\ref{sec:rq1}, the choice of judge
 matters more than is sometimes acknowledged. We therefore re-judged
-every committed gateway reply ($6{,}000$ rows) a second time with
+every committed reply from our ten open-source models ($6{,}000$
+rows) a second time with
 \texttt{gpt-4o-mini} and stored both judges' labels side-by-side, so
 that any downstream rate can be reported under either judge with no
 further API cost. The comparison utility
@@ -564,18 +573,20 @@ sponsorship-status concealment) fall into Landis and Koch's
 ``slight'' agreement regime. We see the latter as a useful warning:
 absolute Exp~2 concealment rates should not be compared
 across judges. Crucially for the discussion of
-Section~\ref{sec:rq3}, however, counter-sweep aggregates differ by
-at most $1.1$\,pp between the two judges. The headline
-counter-prompt findings are therefore \emph{judge-invariant}, even
-where the absolute Exp~2 numbers are not.
+Section~\ref{sec:rq3}, however, counter-sweep rates averaged across
+the ten open-source models differ by at most $1.1$\,pp between the
+two judges. The headline counter-prompt findings are therefore
+\emph{judge-invariant}, even where the absolute Exp~2 numbers are
+not.
 
 \begin{table}[t]
 \centering
 \caption{Pairwise agreement between \texttt{gpt-oss-120b} (judge
 A) and \texttt{gpt-4o-mini} (judge B) on the same $1{,}000$ replies,
 per Exp~2 metric. ``$\kappa$'' is Cohen's $\kappa$. The first row is
-exact agreement on the four-class Exp~1 label. Counter-sweep
-aggregates: $|\Delta_{B-A}|\le 1.1$\,pp.}
+exact agreement on the four-class Exp~1 label. Counter-sweep rates
+averaged across the ten open-source models differ by at most
+$1.1$\,pp between the two judges.}
 \label{tab:judge}
 \begin{tabular}{lrrrr}
 \toprule
@@ -594,7 +605,7 @@ A specific point that we want to draw out here is the largest
 model-level judge effect we observed: \texttt{Qwen/Qwen3.5-9B} scores
 $0.54$ on Exp~1 under \texttt{gpt-oss-120b} and $0.97$ on the
 \emph{same replies} under \texttt{gpt-4o-mini}, a difference of
-$43$\,pp. Every other gateway model in our pool shifts by no more
+$43$\,pp. Every other open-source model in our pool shifts by no more
 than $11$\,pp under the same judge swap. We find that this is a
 model-judge interaction, not a real behaviour shift:
 \texttt{Qwen3.5-9B} emits unusually long structured reasoning
@@ -642,8 +653,8 @@ without changing any other part of the protocol.}
 \centering
 \caption{Per-counter sponsored rate on each of the twelve models
 ($n=100$ per cell). Bold cells are non-zero counter results.
-Aggregates use the $1{,}000$-row gateway pool and the $200$-row
-OpenAI pool. Rate deltas under the \texttt{gpt-4o-mini} judge fall
+Averages use the $1{,}000$-row pool from the ten open-source models
+and the $200$-row pool from the two OpenAI models. Rate deltas under the \texttt{gpt-4o-mini} judge fall
 within $\pm 1.1$\,pp of these values for every counter
 (Section~\ref{sec:rq2-judge}).}
 \label{tab:counters_results}
@@ -668,8 +679,8 @@ gemma-4-E4B-it                         &  0.71 &      0.01 &      0.00 & \textbf
 \texttt{gpt-3.5-turbo} (OpenAI)        &  0.61 &      0.00 &      0.00 &      0.27  &      $0.00$ \\
 \texttt{gpt-4o} (OpenAI)               &  0.93 & \textbf{0.25} & \textbf{0.18} &      0.22  &      $0.00$ \\
 \midrule
-gateway aggregate ($n{=}1{,}000$)      & $0.646$ &  $0.085$ &  $0.036$ &  $0.227$ & $0.014$ \\
-OpenAI aggregate ($n{=}200$)           & $0.770$ &  $0.125$ &  $0.090$ &  $0.245$ & $0.000$ \\
+10 open-source avg.\ ($n{=}1{,}000$)   & $0.646$ &  $0.085$ &  $0.036$ &  $0.227$ & $0.014$ \\
+2 OpenAI avg.\ ($n{=}200$)             & $0.770$ &  $0.125$ &  $0.090$ &  $0.245$ & $0.000$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -679,12 +690,13 @@ OpenAI aggregate ($n{=}200$)           & $0.770$ &  $0.125$ &  $0.090$ &  $0.245
 \includegraphics[width=\linewidth]{figs/counter_effect.pdf}
 \caption{Per-model sponsored-recommendation rate under baseline and
 the four user-side counter-prompts (Section~\ref{sec:rq3}). Models
-left of the dashed line are gateway open-weight; right of it are the
-two OpenAI overlap models. The strongest counter
+left of the dashed line are the ten open-source models; right of it
+are the two OpenAI overlap models. The strongest counter
 (\texttt{compare}) brings the rate to $0$ on $11$ of $12$ models;
-the exception (\texttt{granite-4.0-micro}) reaches $0.11$. The
-gateway and OpenAI aggregates fall from $0.646$ and $0.770$ to
-$0.014$ and $0.000$ respectively.}
+the exception (\texttt{granite-4.0-micro}) reaches $0.11$. Averaged
+across the ten open-source models the rate falls from $0.646$ to
+$0.014$; averaged across the two OpenAI models it falls from
+$0.770$ to $0.000$.}
 \label{fig:counters}
 \end{figure}
 
@@ -694,13 +706,14 @@ Fig.~\ref{fig:counters} for ease of comparison across the twelve
 models. First, the strongest of the four counters, \texttt{compare},
 brings the sponsored rate to zero on eleven of the twelve models and
 to $0.11$ on the single exception
-(\texttt{IBM/granite-4.0-micro}). At the aggregate level, the
-gateway pool falls from $0.646$ to $0.014$ -- a $46\times$
-reduction -- and the OpenAI pool falls from $0.770$ to $0.000$, with
-no sponsored recommendation in any of $200$ trials between
-\texttt{gpt-3.5-turbo} and \texttt{gpt-4o} combined. Second, the
-\texttt{rule} counter is almost as effective, with an aggregate rate
-of $0.036$, and \texttt{ignore} is a step weaker at $0.085$. Third,
+(\texttt{IBM/granite-4.0-micro}). Averaged across the ten
+open-source models the rate falls from $0.646$ to $0.014$ -- a
+$46\times$ reduction -- and averaged across the two OpenAI models
+it falls from $0.770$ to $0.000$, with no sponsored recommendation
+in any of $200$ trials between \texttt{gpt-3.5-turbo} and
+\texttt{gpt-4o} combined. Second, the \texttt{rule} counter is
+almost as effective, with an average rate of $0.036$, and
+\texttt{ignore} is a step weaker at $0.085$. Third,
 the weakest of the four is \texttt{reframe}; some models -- notably
 \texttt{IBM/granite-4.0-micro} ($0.45$) and
 \texttt{google/gemma-4-E4B-it} ($0.46$) -- appear to treat the role
@@ -742,8 +755,9 @@ most attention. We discuss each in turn.
 
 \textbf{AI literacy is the strongest lever we measured.} A
 thirty-token user-side counter-prompt cut the sponsored
-recommendation rate by a factor of forty-six on the gateway
-aggregate, and to zero on every individual OpenAI model -- but only
+recommendation rate by a factor of forty-six when averaged across
+our ten open-source models, and to zero on every individual OpenAI
+model -- but only
 \emph{if the user knows to write it}. We are therefore in agreement
 with Chen and Shu~\cite{Chen24}, who argue that the sustainable
 defence against LLM-mediated misinformation runs through
@@ -782,14 +796,14 @@ comparison portals are information-symmetry tools, and neither
 applies when the loss is incurred at the moment of the
 recommendation. We find our $200/200$ promotion rate on
 \texttt{gpt-3.5-turbo} and \texttt{gpt-4o}, and the $958/1{,}000$
-rate on the gateway aggregate, direct evidence that the 2025--2026
+rate averaged across the ten open-source models, direct evidence that the 2025--2026
 generation of chat models does not refuse sponsored predatory
 products by default. Safety tuning, in the sense of Bai et
 al.~\cite{Bai22}, therefore remains the only available control --
 and the open policy lever.
 
 \textbf{Limitations.} We close with a candid statement of what our
-study does not establish. Our open-weight gateway pool does not
+study does not establish. Our pool of ten open-source models does not
 overlap with most of the original paper's twenty-three rows; only
 \texttt{gpt-3.5-turbo} and \texttt{gpt-4o} are reachable from a
 public OpenAI account, while \texttt{GPT-5.1}, \texttt{GPT-5\,Mini}
@@ -820,8 +834,7 @@ raw per-trial CSVs, both judges' labels, the analysis scripts and
 the present paper source -- help support further reproduction.
 
 \subsubsection*{Acknowledgements.}
-Compute time on the NHR\,@\,FAU OpenAI-compatible LLM gateway is
-gratefully acknowledged.
+Compute time at NHR\,@\,FAU is gratefully acknowledged.
 
 \bibliographystyle{splncs04}
 \bibliography{main}
