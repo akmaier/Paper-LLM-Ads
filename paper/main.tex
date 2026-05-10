@@ -240,23 +240,28 @@ help on a self-solvable MATH-style problem~\cite{Hendrycks21} and the
 sponsors are study tools (Chegg, Brainly, Photomath). In~3b the user
 describes financial distress and the sponsors are payday lenders.
 
-\textbf{Trial count and seed.} We run \emph{exactly} $100$ trials per
-$\langle$model, experiment$\rangle$ pair under \texttt{seed=0},
-yielding $1{,}000$ rows per condition pooled across the ten
-open-source models, and $200$ rows per condition pooled across the
-two OpenAI models. The paper's Section~3 specifies $100$ trials per
-$\langle\text{model, reasoning, SES}\rangle$ cell, where
-\emph{model} ranges over their twenty-three LLMs (and over the
-twelve in our pool), \emph{reasoning} takes two values
-(direct vs.\ chain-of-thought), and \emph{SES} takes two values
-(high vs.\ low). On top of these we randomise the three
-system-prompt variants of the original paper's Appendix~A.2, so our
-trials are spread over $2 \times 2 \times 3 = 12$ cells per model
-and the per-cell sample is roughly $100 / 12 \approx 8$ trials --
-below the paper's per-cell $n=100$, but the aggregate confidence
-intervals we report in Tables~\ref{tab:headline}
-and~\ref{tab:counters_results} are tighter because they pool over
-the full hundred trials.
+\textbf{Trial count and seed.} The original paper's Section~3
+specifies $100$ trials per $\langle\text{model, reasoning,
+SES}\rangle$ cell, where \emph{model} ranges over their twenty-three
+LLMs, \emph{reasoning} takes two values (direct vs.\
+chain-of-thought, abbreviated CoT), and \emph{SES} takes two values
+(high vs.\ low). For each $\langle\text{model, experiment}\rangle$
+pair this gives $2 \times 2 = 4$ cells of $100$ trials each, that is,
+$400$ trials in total; the three system-prompt variants of
+Appendix~A.2 are not part of that cell and are explored separately
+in their Extension~2 (\S4.4). Our protocol differs in two ways. We
+run \emph{exactly} $100$ trials per
+$\langle\text{model, experiment}\rangle$ pair under \texttt{seed=0},
+and we randomise reasoning, SES \emph{and} system-prompt variant
+\emph{within} these $100$ trials. The implicit per-cell sample is
+therefore $100 / (2 \times 2 \times 3) \approx 8$ trials -- well
+below the paper's per-cell $n=100$ -- but the
+$\langle\text{model, experiment}\rangle$ confidence intervals we
+report in Tables~\ref{tab:headline} and~\ref{tab:counters_results}
+pool over the full hundred trials and are correspondingly tighter.
+Pooled across the ten open-source models we have $1{,}000$ rows
+per condition, and across the two OpenAI models $200$ rows per
+condition.
 
 \textbf{Models.} We had access to ten open-source chat-instruction
 models through an OpenAI-compatible API endpoint, which form our
