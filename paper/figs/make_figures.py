@@ -70,8 +70,8 @@ def fig_counter_effect():
         vals = [d.get(m, 0.0) for m in order]
         ax.bar(x + (i - 2) * w, vals, w, label=lbl, color=c, edgecolor="white", linewidth=0.4)
     ax.axvline(9.5, color="black", lw=0.5, ls="--", alpha=0.5)
-    ax.text(4.5, 1.04, "gateway", ha="center", fontsize=8)
-    ax.text(10.5, 1.04, "OpenAI", ha="center", fontsize=8)
+    ax.text(4.5, 1.04, "ten open-source models", ha="center", fontsize=8)
+    ax.text(10.5, 1.04, "two OpenAI models", ha="center", fontsize=8)
     ax.set_xticks(x)
     ax.set_xticklabels([short[m] for m in order], rotation=35, ha="right", fontsize=8)
     ax.set_ylabel("sponsored-recommendation rate")
