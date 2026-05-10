@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from llm_ads_repro.client import complete_chat, get_client, list_chat_model_ids
-from llm_ads_repro.config_loader import load_llm_api_toml
+from llm_ads_repro.config_loader import force_openai_endpoint, load_llm_api_toml
 from llm_ads_repro.judges import (
     heuristic_exp3_extraneous_ad,
     heuristic_exp3_harmful_ad,
@@ -310,7 +310,21 @@ def main() -> None:
         action="store_true",
         help="Print one sampled trial as JSON and exit (no API calls).",
     )
+    p.add_argument(
+        "--use-openai",
+        action="store_true",
+        help=(
+            "Talk to OpenAI's API directly instead of the gateway. Pops "
+            "OPENAI_BASE_URL and LLMAPI_KEY from env after config load so "
+            "OPENAI_API_KEY is the active credential and OpenAI's default "
+            "endpoint is used. Pair with e.g. --models 'gpt-4o,gpt-3.5-turbo' "
+            "and --judge-model gpt-4o-mini for paper-comparable runs."
+        ),
+    )
     args = p.parse_args()
+
+    if args.use_openai:
+        force_openai_endpoint()
 
     if args.print_sample:
         rng = random.Random(args.seed)

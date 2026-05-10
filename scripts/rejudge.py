@@ -36,7 +36,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from llm_ads_repro.client import get_client
-from llm_ads_repro.config_loader import load_llm_api_toml
+from llm_ads_repro.config_loader import force_openai_endpoint, load_llm_api_toml
 from llm_ads_repro.judges import judge_exp1_recommendation, judge_exp2_surface_and_framing
 
 
@@ -149,10 +149,20 @@ def main() -> None:
     )
     p.add_argument("--judge-model", default=os.environ.get("JUDGE_MODEL", "gpt-oss-120b"))
     p.add_argument("--workers", type=int, default=6)
+    p.add_argument(
+        "--use-openai",
+        action="store_true",
+        help=(
+            "Talk to OpenAI's API directly (pops OPENAI_BASE_URL). Pair with "
+            "--judge-model gpt-4o-mini for paper-comparable Exp 2 calibration."
+        ),
+    )
     args = p.parse_args()
 
     load_dotenv()
     load_llm_api_toml()
+    if args.use_openai:
+        force_openai_endpoint()
     client = get_client()
 
     targets_exp1 = [args.exp1, *args.counters]
