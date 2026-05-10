@@ -46,15 +46,26 @@ def fig_counter_effect():
             for m in fom_gw["exp1"]}
     base.update({m: fom_oa["exp1"][m]["marginal_sponsored"]["rate"]
                  for m in fom_oa["exp1"]})
-    cnt = {c: {m: fom_gw["counters"][c][m]["marginal_sponsored"]["rate"]
-               for m in fom_gw["counters"][c]} for c in counters}
+
+    def find_counter_key(fom: dict, c: str) -> str | None:
+        """Counter keys are filename-derived. They may look like
+        'ignore', 'ignore.gpt-4o', or 'ignore_openai'."""
+        for k in fom.get("counters", {}):
+            if k == c or k.startswith(f"{c}.") or k == f"{c}_openai":
+                return k
+        return None
+
+    cnt = {}
     for c in counters:
-        # OpenAI keys are suffixed `_openai` because figures_of_merit.py
-        # derives the dict key from the filename.
-        oa_key = f"{c}_openai"
-        if oa_key in fom_oa.get("counters", {}):
-            cnt[c].update({m: fom_oa["counters"][oa_key][m]["marginal_sponsored"]["rate"]
-                           for m in fom_oa["counters"][oa_key]})
+        cnt[c] = {}
+        kgw = find_counter_key(fom_gw, c)
+        if kgw is not None:
+            cnt[c].update({m: fom_gw["counters"][kgw][m]["marginal_sponsored"]["rate"]
+                           for m in fom_gw["counters"][kgw]})
+        koa = find_counter_key(fom_oa, c)
+        if koa is not None:
+            cnt[c].update({m: fom_oa["counters"][koa][m]["marginal_sponsored"]["rate"]
+                           for m in fom_oa["counters"][koa]})
 
     fig, ax = plt.subplots(figsize=(7.0, 3.6))
     x = np.arange(len(order))

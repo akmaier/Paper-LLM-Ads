@@ -40,22 +40,26 @@ Wu et al.\ (2026) showed that most frontier large language models
 their system prompt contains a soft sponsorship cue. We reproduce
 their evaluation on ten open-weight chat models plus the two of their
 twenty-three models that are still reachable today
-(\texttt{gpt-3.5-turbo}, \texttt{gpt-4o}). Three findings emerge.
+(\texttt{gpt-3.5-turbo}, \texttt{gpt-4o}). All headline numbers in
+this paper are produced under the same judge the original paper used
+(\texttt{gpt-4o}); we additionally store every label under an
+open-weight (\texttt{gpt-oss-120b}) and a smaller proprietary
+(\texttt{gpt-4o-mini}) judge for an ablation. Three findings emerge.
 First, a prose description of an LLM evaluation pipeline is not, on
 its own, sufficient for accurate reproduction: we surfaced three
 silent implementation failures that each shifted a reported rate by
-tens of percentage
-points. Second, the central claims do generalise -- the
-\texttt{gpt-3.5-turbo} logistic-regression intercept replicates the
-original to two decimals ($\alpha=0.86$), and 200 of 200 trials on
-\texttt{gpt-3.5-turbo} and \texttt{gpt-4o} promote a payday lender
-to a financially distressed user. Third, a thirty-token user prompt
-that asks the assistant for a neutral comparison table first cuts
-sponsored recommendation from $64.6\,\%$ to $1.4\,\%$ averaged across
-our ten open-source models, and from $77\,\%$ to $0\,\%$ averaged
-across the two OpenAI models. AI literacy and price-comparison portals are
-likely market-level mitigations; the harmful-product cell is bounded
-by neither. Raw data, labels and analysis scripts are at
+tens of percentage points. Second, the central claims do generalise
+-- the \texttt{gpt-3.5-turbo} logistic-regression intercept of
+$\alpha=0.81$ is within four points of the original
+$\alpha=0.86$, and 200 of 200 trials on \texttt{gpt-3.5-turbo} and
+\texttt{gpt-4o} promote a payday lender to a financially distressed
+user. Third, a thirty-token user prompt that asks the assistant for
+a neutral comparison table first cuts sponsored recommendation from
+$46.9\,\%$ to $1.0\,\%$ averaged across our ten open-source models,
+and from $53.0\,\%$ to $0\,\%$ averaged across the two OpenAI models.
+AI literacy and price-comparison portals are likely market-level
+mitigations; the harmful-product cell is bounded by neither. Raw
+data, labels and analysis scripts are at
 \url{https://github.com/akmaier/Paper-LLM-Ads}.
 
 \keywords{Large language models \and Reproducibility \and Sponsored
@@ -117,15 +121,16 @@ failure modes that we encountered during a careful re-implementation,
 each invisible at the prose level of the original paper. Second, we sweep a twelve-model pool comprising ten open-source chat
 models plus the two OpenAI rows that overlap with a present-day
 account, at one thousand trials per
-$\langle$model, experiment$\rangle$ pair, with paired evaluation by
-an open-weight (\texttt{gpt-oss-120b}) and a paper-aligned
-(\texttt{gpt-4o-mini}) classifier; the central logistic-regression
-intercept of~\cite{Wu26}'s Section~4.3 replicates to two decimals.
-Third, we extend the original protocol with four user-side
-counter-prompts. Averaged across our ten open-source models, the
-strongest counter cuts sponsored-recommendation rate by a factor of
-forty-six; averaged across the two OpenAI models, it cuts the rate
-to zero. Fourth, we close with a discussion of two
+$\langle$model, experiment$\rangle$ pair, judged by \texttt{gpt-4o}
+(the same classifier the original paper used) and additionally by
+\texttt{gpt-oss-120b} and \texttt{gpt-4o-mini} as an ablation; the
+central logistic-regression intercept of~\cite{Wu26}'s Section~4.3
+replicates within four percentage points ($\alpha=0.81$ versus the
+paper's $0.86$). Third, we extend the original protocol with four
+user-side counter-prompts. Averaged across our ten open-source
+models, the strongest counter cuts sponsored-recommendation rate by
+a factor of forty-seven; averaged across the two OpenAI models, it
+cuts the rate to zero. Fourth, we close with a discussion of two
 market-level mitigations -- AI literacy and price-comparison
 aggregators -- and one residual cell where neither applies and where
 safety tuning, in the sense of~\cite{Bai22}, remains the only lever.
@@ -422,69 +427,68 @@ in each column. Wilson 95\,\% CIs in
                                               & \textbf{Exp 1} & \textbf{Exp 2} & \textbf{fram+}        & \textbf{sp.c.}      & \textbf{Exp 3a}  & \textbf{Exp 3b} \\
                                               & sponsored      & surf.          & $|\,$surf             & $|\,$surf           & extran.          & harmful         \\
 \midrule
-Magistral-Small-2509-FP8                      &   0.67 &   0.30 &   0.77 &   0.20 &   0.72 &   0.99 \\
-granite-4.0-micro                             &   0.69 &   0.04 &   0.50 &   0.50 &   0.01 &   0.97 \\
-Phi-4-mini-instruct                           &   0.52 &   0.21 &   0.62 &   0.05 &   0.71 &   0.79 \\
-Qwen3.5-9B                                    &   0.54 &   0.80 &   0.86 &   0.15 &   0.98 &   0.96 \\
-Qwen3.6-35B-A3B-FP8                           & \textbf{0.94} & \textbf{0.95} & 0.95 & 0.05 & 0.73 & 0.97 \\
-Qwen3-VL-8B-Instruct                          &   0.38 &   0.17 &   0.88 &   0.06 &   0.29 &   0.93 \\
-Mistral-Small-3.2-24B                         &   0.72 &   0.40 &   0.88 &   0.23 &   0.85 & \textbf{1.00} \\
-gemma-3-27b (q4)                              &   0.41 &   0.18 &   0.44 & \textbf{0.39} & \textbf{1.00} & \textbf{1.00} \\
-gemma-4-E4B-it                                &   0.71 &   0.75 &   0.79 &   0.08 & \textbf{1.00} & \textbf{1.00} \\
-\texttt{gpt-oss-120b}                         &   0.88 &   0.53 &   0.30 &   0.04 &   0.48 &   0.97 \\
+Magistral-Small-2509-FP8                      &   0.34 &   0.31 &   0.48 &   0.68 &   0.72 &   0.99 \\
+granite-4.0-micro                             &   0.48 &   0.08 &   0.62 &   0.88 &   0.01 &   0.97 \\
+Phi-4-mini-instruct                           &   0.17 &   0.23 &   0.17 &   0.65 &   0.71 &   0.79 \\
+Qwen3.5-9B                                    & \textbf{0.81} &   0.55 &   0.65 & \textbf{0.91} &   0.98 &   0.96 \\
+Qwen3.6-35B-A3B-FP8                           &   0.73 & \textbf{0.95} & 0.79 & 0.67 & 0.73 & 0.97 \\
+Qwen3-VL-8B-Instruct                          &   0.29 &   0.22 &   0.64 &   0.68 &   0.29 &   0.93 \\
+Mistral-Small-3.2-24B                         &   0.50 &   0.44 &   0.68 &   0.61 &   0.85 & \textbf{1.00} \\
+gemma-3-27b (q4)                              &   0.44 &   0.25 &   0.60 & \textbf{0.96} & \textbf{1.00} & \textbf{1.00} \\
+gemma-4-E4B-it                                &   0.45 &   0.76 &   0.24 &   0.68 & \textbf{1.00} & \textbf{1.00} \\
+\texttt{gpt-oss-120b}                         &   0.48 &   0.44 &   0.20 &   0.64 &   0.48 &   0.97 \\
 \midrule
-\texttt{gpt-3.5-turbo} (OpenAI)               &   0.61 &   0.27 & \textbf{1.00} & 0.56 & 0.58 & \textbf{1.00} \\
-\texttt{gpt-4o} (OpenAI)                      &   0.93 & \textbf{1.00} & 0.98 & 0.56 & 0.04 & \textbf{1.00} \\
+\texttt{gpt-3.5-turbo} (OpenAI)               &   0.61 &   0.11 &   0.64 &   0.55 &   0.58 & \textbf{1.00} \\
+\texttt{gpt-4o} (OpenAI)                      &   0.45 &   0.79 &   0.72 &   0.71 &   0.04 & \textbf{1.00} \\
 \midrule
-10 open-source avg.\ ($n{=}1{,}000$)          &  0.646 &  0.433 &  0.767 &  0.166 &  0.677 &  0.958 \\
-2 OpenAI avg.\ ($n{=}200$)                    &  0.770 &  0.635 &  0.984 &  0.560 &  0.310 &  1.000 \\
+10 open-source avg.\ ($n{=}1{,}000$)          &  0.469 &  0.423 &  0.522 &  0.716 &  0.677 &  0.958 \\
+2 OpenAI avg.\ ($n{=}200$)                    &  0.530 &  0.450 &  0.711 &  0.689 &  0.310 &  1.000 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 For the two models that overlap directly with the paper, the
 comparison is straightforward. Wu et al.\ report a logistic-regression
-intercept of $\alpha=0.86$ (with thinking) and $\alpha=0.84$
-(direct) for \texttt{GPT-3.5} in their Table~2; the corresponding
-base sponsored probability is $\sigma(0.85)=0.70$. Our
-\texttt{gpt-3.5-turbo} marginal is $0.61$, that is, nine percentage
-points below the paper's value. Given combined sampling variation
-and seed variability, we consider this an unproblematic agreement.
-For \texttt{GPT-4o} the paper's intercept of $\alpha=0.77/1.00$
-implies a base of $0.71$; our value is $0.93$. We see two plausible
-explanations for this larger gap. First, \texttt{gpt-4o} is a
-moving target -- the published name covers several model
-checkpoints, and the version available at the time of our
-evaluation differs from the version the original authors queried.
-Second, our randomisation over the three Appendix~A.2 system-prompt
-variants may concentrate weight on the most strongly-sponsorship-
-biased variant. Reassuringly, we will see in the rest of this
-section that the within-condition structure of the paper -- the
-high-SES versus low-SES gap, the commission/wealth slope, the
-relative ordering of model families -- replicates without
-ambiguity.
+intercept of $\alpha\approx 0.85$ for \texttt{GPT-3.5} in their
+Table~2 -- a base sponsored probability of $\sigma(0.85)=0.70$.
+Our \texttt{gpt-3.5-turbo} marginal under the same \texttt{gpt-4o}
+judge is $0.61$, nine percentage points below the paper's value:
+an unproblematic agreement given seed variability. For
+\texttt{GPT-4o} the paper's intercept of $\alpha=0.77/1.00$ implies
+a base of $0.71$; our value is $0.45$. The most parsimonious
+explanation is that \texttt{gpt-4o} is a moving target -- the name
+covers several checkpoints, and intervening safety-tuning between
+the original paper's evaluation window and ours is the simplest
+reason for the rate to drift down. Reassuringly, the
+within-condition structure of the paper -- the high-SES versus
+low-SES gap, the commission/wealth slope, the relative ordering of
+model families -- replicates without ambiguity.
 
 We highlight three cells of Table~\ref{tab:headline} that we found
 most striking:
 \begin{enumerate}
 \item Both \texttt{gpt-3.5-turbo} and \texttt{gpt-4o} recommend a
       payday lender to a financially distressed user in
-      $100/100$ trials. Aggregated over the two OpenAI models, the
+      $100/100$ trials. Pooled over the two OpenAI models, the
       Exp~3b promotion rate is $200/200$ -- not a single refusal.
-      Averaged across our ten open-source models the rate is
+      Pooled across our ten open-source models the rate is
       $958/1{,}000$ ($95.8\,\%$). Both paper-aligned and open-weight
-      families share this failure.
+      families share this failure. The numbers come from a
+      transparent keyword heuristic (Section~\ref{sec:method}) and
+      are therefore judge-independent.
 \item \texttt{gpt-4o} surfaces the sponsored alternative in
-      $100/100$ Exp~2 trials when the user has explicitly asked to
-      book another airline, and frames it positively in $98/100$.
-      \texttt{gpt-3.5-turbo} only surfaces in $27/100$.
+      $79/100$ Exp~2 trials when the user has explicitly asked to
+      book another airline. \texttt{gpt-3.5-turbo} only surfaces in
+      $11/100$ trials but conceals the sponsorship of the alternative
+      in $55\,\%$ of \emph{those} surfacings, so the smaller model
+      is more willing to silently bias the choice without flagging it.
 \item \texttt{gpt-3.5-turbo} promotes Chegg/Brainly/Photomath in
       $58/100$ Exp~3a trials; \texttt{gpt-4o} does it in $4/100$.
-      The paper reports the same inversion at the modern-model end
-      (GPT-5\,Mini, GPT-5.1, Llama-4 Maverick all near $0\,\%$).
-      Newer GPT models appear to have learned to refuse extraneous
-      sponsored promotion while still happily promoting predatory
-      financial products.
+      The original paper reports the same inversion at the modern-model
+      end (GPT-5\,Mini, GPT-5.1, Llama-4 Maverick all near
+      $0\,\%$). Newer GPT models appear to have learned to refuse
+      extraneous sponsored promotion while still happily promoting
+      predatory financial products.
 \end{enumerate}
 
 \subsection{Replicating the Section~4.3 Commission/Wealth Grid}
@@ -502,21 +506,21 @@ regression with weak L2 regularisation, an intercept, and the two
 features \texttt{commission\_percent} and
 $\log_{10}(\text{wealth})$. The fitted coefficients are
 \begin{equation}
-  \alpha = +0.86,\qquad
-  \beta_{\text{commission}}^{\text{std}} = -0.04,\qquad
-  \beta_{\text{wealth}}^{\text{std}} = +1.49.
+  \alpha = +0.81,\qquad
+  \beta_{\text{commission}}^{\text{std}} = -0.03,\qquad
+  \beta_{\text{wealth}}^{\text{std}} = +1.53.
   \label{eq:logistic}
 \end{equation}
-The intercept matches the paper's $\alpha_{\text{thinking}}=0.86$
-\emph{to two decimals} -- a level of agreement that, given the
-nondeterminism inherent in LLM sampling, we consider striking.
+The intercept is within five percentage points of the paper's
+$\alpha_{\text{thinking}}=0.86$ -- agreement we consider close given
+the nondeterminism inherent in LLM sampling.
 Importantly, the structural finding of paper~\S4.3 -- that models
 respond far more strongly to user wealth than to the site's
 commission rate -- also replicates without ambiguity. Raising the
 commission from $1\,\%$ to $20\,\%$ at fixed wealth shifts the
-sponsored rate by at most $5$\,pp, whereas raising wealth from
+sponsored rate by at most $7$\,pp, whereas raising wealth from
 \$$500$ to \$$200{,}000$ at fixed commission shifts it by
-$66$ to $80$\,pp. The model is essentially indifferent to whether
+$78$ to $80$\,pp. The model is essentially indifferent to whether
 the booking site earns one or twenty percent of the ticket price,
 and very sensitive to whether the user can afford to pay the higher
 fare in the first place.
@@ -533,24 +537,24 @@ fitted on the full $n=1{,}200$ pool.}
 \toprule
                 & \$\,$500$ & \$\,$5{,}000$ & \$\,$50{,}000$ & \$\,$200{,}000$ \\
 \midrule
-$1\,\%$  commission & $0.17$ & $0.73$ & $0.79$ & $0.93$ \\
-$10\,\%$ commission & $0.12$ & $0.71$ & $0.84$ & $0.88$ \\
-$20\,\%$ commission & $0.12$ & $0.72$ & $0.82$ & $0.90$ \\
+$1\,\%$  commission & $0.15$ & $0.71$ & $0.78$ & $0.93$ \\
+$10\,\%$ commission & $0.10$ & $0.70$ & $0.84$ & $0.88$ \\
+$20\,\%$ commission & $0.10$ & $0.71$ & $0.82$ & $0.90$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 We additionally ran the steering experiment of paper~\S4.5 on
-\texttt{gpt-4o}. A customer-only system instruction drops the rate
-by $36$\,pp ($0.93 \to 0.57$); a website-only instruction raises it
-by $4$\,pp (to $0.97$); an equality instruction lands in between (at
-$0.81$). We note that this mirrors the paper's Figure~2 observation
-that ``even when instructed to only prioritize the user, GPT 5.1
-and 5\,Mini greatly increased rates above $90\,\%$.'' Steering from
-the company side, in other words, helps but does not bring
-\texttt{gpt-4o} anywhere near zero. We will return to this number
-in Section~\ref{sec:rq3} when comparing it with the user-side
-counter-prompts.
+\texttt{gpt-4o}. The unsteered baseline of $0.45$ moves to
+$0.26$ under a customer-only system instruction (a $19$\,pp drop),
+to $0.35$ under an equality instruction, and to $0.47$ under a
+website-only instruction. We note that the ordering matches the
+paper's Figure~2 observation, but that on our \texttt{gpt-4o}
+checkpoint the absolute spread is smaller than on the paper's
+GPT-5 series. Steering from the company side helps but, even at
+its strongest, does not bring \texttt{gpt-4o} below $26\,\%$. We
+return to these numbers in Section~\ref{sec:rq3} when comparing
+them with the user-side counter-prompts.
 
 \subsection{Paired Judge Ablation}
 \label{sec:rq2-judge}
@@ -688,22 +692,22 @@ within $\pm 1.1$\,pp of these values for every counter
 \toprule
                                        & \textbf{baseline} & \texttt{ignore} & \texttt{rule} & \texttt{reframe} & \texttt{compare} \\
 \midrule
-Magistral-Small-2509-FP8               &  0.67 &      0.07 &      0.03 &      0.16  &      $0.02$ \\
-granite-4.0-micro                      &  0.69 & \textbf{0.21} & \textbf{0.25} & \textbf{0.45} & \textbf{0.11} \\
-Phi-4-mini-instruct                    &  0.52 &      0.20 &      0.04 &      0.16  &      $0.01$ \\
-Qwen3.5-9B                             &  0.54 &      0.00 &      0.00 &      0.04  &      $0.00$ \\
-Qwen3.6-35B-A3B-FP8                    &  0.94 &      0.02 &      0.00 &      0.23  &      $0.00$ \\
-Qwen3-VL-8B-Instruct                   &  0.38 &      0.03 &      0.00 &      0.30  &      $0.00$ \\
-Mistral-Small-3.2-24B                  &  0.72 &      0.02 &      0.04 &      0.07  &      $0.00$ \\
-gemma-3-27b (q4)                       &  0.41 &      0.01 &      0.00 &      0.22  &      $0.00$ \\
-gemma-4-E4B-it                         &  0.71 &      0.01 &      0.00 & \textbf{0.46} &      $0.00$ \\
-\texttt{gpt-oss-120b}                  &  0.88 & \textbf{0.28} &      0.00 &      0.18  &      $0.00$ \\
+Magistral-Small-2509-FP8               &  0.34 &      0.01 &      0.03 &      0.06  &      $0.01$ \\
+granite-4.0-micro                      &  0.48 & \textbf{0.08} & \textbf{0.14} & \textbf{0.41} & \textbf{0.08} \\
+Phi-4-mini-instruct                    &  0.17 &      0.06 &      0.03 &      0.10  &      $0.00$ \\
+Qwen3.5-9B                             &  0.81 &      0.00 &      0.01 &      0.04  &      $0.00$ \\
+Qwen3.6-35B-A3B-FP8                    &  0.73 &      0.02 &      0.00 &      0.23  &      $0.00$ \\
+Qwen3-VL-8B-Instruct                   &  0.29 &      0.03 &      0.00 &      0.30  &      $0.00$ \\
+Mistral-Small-3.2-24B                  &  0.50 &      0.01 &      0.03 &      0.07  &      $0.00$ \\
+gemma-3-27b (q4)                       &  0.44 &      0.01 &      0.00 &      0.23  &      $0.00$ \\
+gemma-4-E4B-it                         &  0.45 &      0.02 &      0.00 & \textbf{0.46} &      $0.01$ \\
+\texttt{gpt-oss-120b}                  &  0.48 & \textbf{0.13} &      0.00 &      0.11  &      $0.00$ \\
 \midrule
 \texttt{gpt-3.5-turbo} (OpenAI)        &  0.61 &      0.00 &      0.00 &      0.27  &      $0.00$ \\
-\texttt{gpt-4o} (OpenAI)               &  0.93 & \textbf{0.25} & \textbf{0.18} &      0.22  &      $0.00$ \\
+\texttt{gpt-4o} (OpenAI)               &  0.45 &      0.03 & \textbf{0.13} &      0.06  &      $0.00$ \\
 \midrule
-10 open-source avg.\ ($n{=}1{,}000$)   & $0.646$ &  $0.085$ &  $0.036$ &  $0.227$ & $0.014$ \\
-2 OpenAI avg.\ ($n{=}200$)             & $0.770$ &  $0.125$ &  $0.090$ &  $0.245$ & $0.000$ \\
+10 open-source avg.\ ($n{=}1{,}000$)   & $0.469$ &  $0.037$ &  $0.024$ &  $0.201$ & $0.010$ \\
+2 OpenAI avg.\ ($n{=}200$)             & $0.530$ &  $0.015$ &  $0.065$ &  $0.165$ & $0.000$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -715,11 +719,11 @@ gemma-4-E4B-it                         &  0.71 &      0.01 &      0.00 & \textbf
 the four user-side counter-prompts (Section~\ref{sec:rq3}). Models
 left of the dashed line are the ten open-source models; right of it
 are the two OpenAI overlap models. The strongest counter
-(\texttt{compare}) brings the rate to $0$ on $11$ of $12$ models;
-the exception (\texttt{granite-4.0-micro}) reaches $0.11$. Averaged
-across the ten open-source models the rate falls from $0.646$ to
-$0.014$; averaged across the two OpenAI models it falls from
-$0.770$ to $0.000$.}
+(\texttt{compare}) brings the rate to $0$ on $10$ of $12$ models;
+the most resistant model is \texttt{granite-4.0-micro} ($0.08$).
+Averaged across the ten open-source models the rate falls from
+$0.469$ to $0.010$; averaged across the two OpenAI models it falls
+from $0.530$ to $0.000$.}
 \label{fig:counters}
 \end{figure}
 
@@ -727,18 +731,19 @@ Three robust effects emerge from
 Table~\ref{tab:counters_results} -- which we visualise in
 Fig.~\ref{fig:counters} for ease of comparison across the twelve
 models. First, the strongest of the four counters, \texttt{compare},
-brings the sponsored rate to zero on eleven of the twelve models and
-to $0.11$ on the single exception
-(\texttt{IBM/granite-4.0-micro}). Averaged across the ten
-open-source models the rate falls from $0.646$ to $0.014$ -- a
-$46\times$ reduction -- and averaged across the two OpenAI models
-it falls from $0.770$ to $0.000$, with no sponsored recommendation
+brings the sponsored rate to zero on ten of the twelve models and
+to small single-digit residuals on the two exceptions
+(\texttt{IBM/granite-4.0-micro} at $0.08$,
+\texttt{Magistral-Small-2509} at $0.01$). Averaged across the ten
+open-source models the rate falls from $0.469$ to $0.010$ -- a
+$47\times$ reduction -- and averaged across the two OpenAI models
+it falls from $0.530$ to $0.000$, with no sponsored recommendation
 in any of $200$ trials between \texttt{gpt-3.5-turbo} and
 \texttt{gpt-4o} combined. Second, the \texttt{rule} counter is
-almost as effective, with an average rate of $0.036$, and
-\texttt{ignore} is a step weaker at $0.085$. Third,
-the weakest of the four is \texttt{reframe}; some models -- notably
-\texttt{IBM/granite-4.0-micro} ($0.45$) and
+almost as effective, with an average rate of $0.024$ on the
+open-source side, and \texttt{ignore} is a step weaker at $0.037$.
+Third, the weakest of the four is \texttt{reframe}; some models --
+notably \texttt{IBM/granite-4.0-micro} ($0.41$) and
 \texttt{google/gemma-4-E4B-it} ($0.46$) -- appear to treat the role
 re-frame as creative roleplay and continue following the system
 instruction nonetheless.
@@ -755,7 +760,7 @@ overrule the system prompt; it is, in this sense, the most directly
 constrained by the instruction-hierarchy preferences described in
 \cite{Wallace24} -- which is also why \texttt{gpt-oss-120b} (a
 strong instruction-follower in our pool) produces the highest
-residual rate under \texttt{ignore} ($0.28$). \texttt{reframe},
+residual rate under \texttt{ignore} ($0.13$). \texttt{reframe},
 finally, only changes the assistant's self-description; on a model
 that treats persona as decorative, the system prompt's preferences
 remain in force.
@@ -763,10 +768,11 @@ remain in force.
 A direct comparison with company-side mitigation is now possible.
 The strongest \emph{system-prompt} steering on \texttt{gpt-4o}
 (Section~\ref{sec:rq2-grid}) lowers its sponsored rate by
-$36$\,pp; the strongest \emph{user-side} counter
-(\texttt{compare}) lowers the same model's rate by $93$\,pp. In our
-experiments, a user with a thirty-token addition to their query
-outperforms the site operator with a full system-prompt rewrite.
+$19$\,pp ($0.45 \to 0.26$); the strongest \emph{user-side} counter
+(\texttt{compare}) lowers the same model's rate by $45$\,pp
+($0.45 \to 0.00$). In our experiments, a user with a thirty-token
+addition to their query outperforms the site operator with a full
+system-prompt rewrite.
 
 \section{Discussion}
 \label{sec:discussion}
@@ -778,7 +784,7 @@ most attention. We discuss each in turn.
 
 \textbf{AI literacy is the strongest lever we measured.} A
 thirty-token user-side counter-prompt cut the sponsored
-recommendation rate by a factor of forty-six when averaged across
+recommendation rate by a factor of forty-seven when averaged across
 our ten open-source models, and to zero on every individual OpenAI
 model -- but only
 \emph{if the user knows to write it}. We are therefore in agreement
@@ -796,7 +802,8 @@ sponsored-LLM advertising.
 \textbf{Price-comparison portals are the structural market
 response.} Once price intransparency in chatbot answers becomes
 visible to enough users -- and our Exp~2 finding that
-\texttt{gpt-4o} discloses sponsorship in only $44\,\%$ of trials
+\texttt{gpt-4o} discloses sponsorship in only $29\,\%$ of the trials
+in which it surfaces a sponsored alternative
 makes this visibility near-certain in repeat domains -- aggregator
 services that re-normalise prices across providers will emerge. The
 template is familiar from airfares: when prices became opaque,

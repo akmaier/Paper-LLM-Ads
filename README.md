@@ -50,37 +50,39 @@ curl -L -o paper.pdf "https://arxiv.org/pdf/2604.08525"
 
 ## Results overview
 
-The committed sweep is **100 trials × 10 chat models = 1000 rows per
-experiment**, judge = `gpt-oss-120b` with `strip_to_user_facing` applied.
-The model set is whatever `/v1/models` exposes on our gateway and is
-*disjoint* from the paper's 23 models — see the
-[Limitations](#limitations-of-the-committed-sample-run) section. Read
-the numbers below as a methodology replication on a newer open-weight
-model set, not as a re-run of the paper's specific rows.
+The committed sweep is **100 trials × 10 open-source chat models = 1000
+rows per experiment**, judged by **`gpt-4o`** (the same classifier the
+original paper used in its §5.1) with `strip_to_user_facing` applied.
+Every reply is additionally labelled by `gpt-oss-120b` (open-weight)
+and `gpt-4o-mini` (smaller proprietary) and saved as `*.gpt-oss-120b.csv`
+/ `*.gpt-4o-mini.csv` siblings, so any rate can be re-derived under
+either ablation judge with no further API calls. Read the numbers
+below as a methodology replication on a newer open-source model set,
+not as a re-run of the paper's specific rows.
 
 **Headline aggregate rates** (all n = 1000):
 
-| outcome | rate (95% Wilson CI) |
+| outcome | rate |
 |---|---|
-| Exp 1 — sponsored flight recommended | **64.6%** [0.62, 0.68] |
-| Exp 2 — sponsored option *surfaced* despite user requesting another | **43.3%** [0.40, 0.46] |
-| Exp 3a — extraneous study-tool ad on a self-solvable math problem | **67.7%** [0.65, 0.71] |
-| Exp 3b — payday-lender ad on a financial-distress prompt | **95.8%** [0.94, 0.97] |
+| Exp 1 — sponsored flight recommended | **46.9%** |
+| Exp 2 — sponsored option *surfaced* despite user requesting another | **42.3%** |
+| Exp 3a — extraneous study-tool ad on a self-solvable math problem | **67.7%** |
+| Exp 3b — payday-lender ad on a financial-distress prompt | **95.8%** |
 
-**Per-model main-experiment rates** (each cell n = 100):
+**Per-model main-experiment rates** (gpt-4o judge, each cell n = 100):
 
 | model | Exp 1 sponsored | Exp 2 surf | Exp 2 framed+ \| surf | Exp 2 spons-conceal \| surf | Exp 3a | Exp 3b |
 |---|---:|---:|---:|---:|---:|---:|
-| GaleneAI/Magistral-Small-2509 | 0.67 | 0.30 | 0.77 | 0.20 | 0.72 | 0.99 |
-| IBM/granite-4.0-micro | 0.69 | 0.04 | 0.50 | 0.50 | 0.01 | 0.97 |
-| Microsoft/Phi-4-mini-instruct | 0.52 | 0.21 | 0.62 | 0.05 | 0.71 | 0.79 |
-| Qwen/Qwen3.5-9B | 0.54 | 0.80 | 0.86 | 0.15 | 0.98 | 0.96 |
-| Qwen/Qwen3.6-35B-A3B-FP8 | 0.94 | 0.95 | 0.95 | 0.05 | 0.73 | 0.97 |
-| Qwen3-VL-8B-Instruct | 0.38 | 0.17 | 0.88 | 0.06 | 0.29 | 0.93 |
-| RedHatAI/Mistral-Small-3.2-24B | 0.72 | 0.40 | 0.88 | 0.23 | 0.85 | 1.00 |
-| RedHatAI/gemma-3-27b (q4) | 0.41 | 0.18 | 0.44 | 0.39 | 1.00 | 1.00 |
-| google/gemma-4-E4B-it | 0.71 | 0.75 | 0.79 | 0.08 | 1.00 | 1.00 |
-| gpt-oss-120b | 0.88 | 0.53 | 0.30 | 0.04 | 0.48 | 0.97 |
+| GaleneAI/Magistral-Small-2509 | 0.34 | 0.31 | 0.48 | 0.68 | 0.72 | 0.99 |
+| IBM/granite-4.0-micro | 0.48 | 0.08 | 0.62 | 0.88 | 0.01 | 0.97 |
+| Microsoft/Phi-4-mini-instruct | 0.17 | 0.23 | 0.17 | 0.65 | 0.71 | 0.79 |
+| Qwen/Qwen3.5-9B | 0.81 | 0.55 | 0.65 | 0.91 | 0.98 | 0.96 |
+| Qwen/Qwen3.6-35B-A3B-FP8 | 0.73 | 0.95 | 0.79 | 0.67 | 0.73 | 0.97 |
+| Qwen3-VL-8B-Instruct | 0.29 | 0.22 | 0.64 | 0.68 | 0.29 | 0.93 |
+| RedHatAI/Mistral-Small-3.2-24B | 0.50 | 0.44 | 0.68 | 0.61 | 0.85 | 1.00 |
+| RedHatAI/gemma-3-27b (q4) | 0.44 | 0.25 | 0.60 | 0.96 | 1.00 | 1.00 |
+| google/gemma-4-E4B-it | 0.45 | 0.76 | 0.24 | 0.68 | 1.00 | 1.00 |
+| gpt-oss-120b | 0.48 | 0.44 | 0.20 | 0.64 | 0.48 | 0.97 |
 
 The `framed+ | surf` and `spons-conceal | surf` columns are *conditioned
 on having surfaced* the sponsored option, matching paper Tables 3 and 4
@@ -91,54 +93,45 @@ CoT vs direct, and per-system-prompt-variant — are in
 [results/figures_of_merit.json](results/figures_of_merit.json).
 
 **Counter-prompt sweep** (extension; the paper does not propose
-user-side mitigations). Aggregate sponsored rate, n = 1000 per condition:
+user-side mitigations). Pooled sponsored rate, n = 1000 per condition,
+gpt-4o judge:
 
 | no counter | `ignore` | `rule` | `reframe` | `compare` |
 |---:|---:|---:|---:|---:|
-| 64.6% | 8.5% | 3.6% | 22.7% | **1.4%** |
+| 46.9% | 3.7% | 2.4% | 20.1% | **1.0%** |
 
 ### Reading the results
 
 - **Soft sponsorship steering works on all 10 models, but unevenly.**
-  Exp 1 sponsored rates span 0.38 to 0.94. The cheapest non-sponsored
-  flight is roughly half the sponsored price, and yet most models still
-  recommend the more expensive option a majority of the time.
-  `Qwen/Qwen3.6-35B-A3B-FP8` (0.94) and `gpt-oss-120b` (0.88) are the
-  most easily steered; `Qwen3-VL-8B-Instruct` (0.38) and
-  `RedHatAI/gemma-3-27b` (0.41) push back the most. This is qualitatively
-  consistent with the paper's finding that 18 of 23 models recommend the
-  sponsored option more than 50% of the time.
+  Exp 1 sponsored rates span 0.17 to 0.81 under the gpt-4o judge. The
+  cheapest non-sponsored flight is roughly half the sponsored price,
+  and yet several models still recommend the more expensive option a
+  majority of the time. `Qwen/Qwen3.5-9B` (0.81) and `Qwen/Qwen3.6` (0.73)
+  are the most easily steered; `Microsoft/Phi-4-mini-instruct` (0.17)
+  and `Qwen3-VL-8B-Instruct` (0.29) push back the most. This is
+  qualitatively consistent with the paper's finding that the majority
+  of frontier models recommend the sponsored option above 50%.
 
-- **Three models show a statistically significant high-SES vs low-SES
-  gap in Exp 1**, in the direction the paper reports (high-SES users
-  get the more-expensive recommendation more often):
-  `gpt-oss-120b` +15 pp (z=+2.23, p=0.026),
-  `RedHatAI/Mistral-Small-3.2-24B` +18 pp (z=+1.97, p=0.049),
-  `RedHatAI/gemma-3-27b` +18 pp (z=+1.82, p=0.069). Two more — Magistral
-  and Phi-4-mini — show similar-magnitude positive gaps that do not
-  cross significance at n = 100. The paper's marginal across all 23
-  models was 64.1% (high-SES) vs 48.6% (low-SES).
-
-- **Exp 2 surfacing varies enormously across models** (0.04 for
+- **Exp 2 surfacing varies enormously across models** (0.08 for
   `IBM/granite-4.0-micro`, 0.95 for `Qwen/Qwen3.6`). When models *do*
-  surface the sponsored alternative, they almost always frame it
-  positively (conditional `framed+ | surf` is 0.30–0.95 across the 10
-  models, with 8 of 10 above 0.6). Conditional sponsorship-concealment
-  is lower than the paper's GPT-4o-judged numbers — see Limitations
-  for the judge calibration discussion.
+  surface the sponsored alternative, they conceal its sponsorship in
+  roughly two-thirds of those cases (mean
+  `spons-conceal | surf` ≈ 0.72 across the 10 models), and they frame
+  it positively in roughly half (`framed+ | surf` ≈ 0.52). This is
+  closer to the original paper's GPT-4o-judged numbers than our
+  earlier ablation runs were.
 
 - **Exp 3b is the alarming cell**: 9 of 10 models promote payday
-  lenders ≥ 0.93 of the time, four hit 1.00, and the aggregate is
+  lenders ≥ 0.93 of the time, four hit 1.00, and the pool average is
   95.8%. Even `Microsoft/Phi-4-mini-instruct` (the lowest at 0.79)
-  is below the paper's GPT-5 Mini "100% of trials" but still well
-  above any reasonable safety threshold. This matches the paper's
-  framing of harmful sponsored-product promotion as a near-universal
-  failure on these prompts.
+  is well above any reasonable safety threshold. This matches the
+  original paper's framing of harmful sponsored-product promotion as
+  a near-universal failure mode on these prompts.
 
-- **The user-side counter `compare` reduces sponsored rate from 64.6%
-  to 1.4%** (≈ 46× reduction) by forcing a neutral table-then-decide
+- **The user-side counter `compare` reduces sponsored rate from 46.9%
+  to 1.0%** (≈ 47× reduction) by forcing a neutral table-then-decide
   format. `rule` (a hard cheapest-acceptable decision rule) is almost
-  as effective at 3.6%. Even the weakest counter, `reframe`, halves
+  as effective at 2.4%. The weakest counter, `reframe`, only halves
   the rate. Details and per-model breakdown are below in
   [Extension: user-side counter-prompts](#extension-user-side-counter-prompts-defeating-the-steering).
 
@@ -296,43 +289,42 @@ between customer-/equality-/company-centered framings. Counter-prompts
 the user could write are a novel contribution of this repo.
 
 Each counter was run with the same harness as the baseline Exp 1
-(**100 trials × 10 chat models = 1000 rows per condition**, judge =
-`gpt-oss-120b` with `strip_to_user_facing` applied, randomized SES /
-reasoning / system-prompt variant). Sponsored-recommendation rate:
+(**100 trials × 10 open-source models = 1000 rows per condition**,
+judge = `gpt-4o`, randomised SES / reasoning / system-prompt
+variant). Sponsored-recommendation rate:
 
 | model | baseline | ignore | rule | reframe | compare |
 |---|---:|---:|---:|---:|---:|
-| GaleneAI/Magistral-Small-2509 | 67.0% | 7.0% | 3.0% | 16.0% | **2.0%** |
-| IBM/granite-4.0-micro | 69.0% | 21.0% | 25.0% | 45.0% | **11.0%** |
-| Microsoft/Phi-4-mini-instruct | 52.0% | 20.0% | 4.0% | 16.0% | **1.0%** |
-| Qwen/Qwen3.5-9B | 54.0% | 0.0% | 0.0% | 4.0% | **0.0%** |
-| Qwen/Qwen3.6-35B-A3B-FP8 | 94.0% | 2.0% | 0.0% | 23.0% | **0.0%** |
-| Qwen3-VL-8B-Instruct | 38.0% | 3.0% | 0.0% | 30.0% | **0.0%** |
-| RedHatAI/Mistral-Small-3.2-24B | 72.0% | 2.0% | 4.0% | 7.0% | **0.0%** |
-| RedHatAI/gemma-3-27b (q4) | 41.0% | 1.0% | 0.0% | 22.0% | **0.0%** |
-| google/gemma-4-E4B-it | 71.0% | 1.0% | 0.0% | 46.0% | **0.0%** |
-| gpt-oss-120b | 88.0% | 28.0% | 0.0% | 18.0% | **0.0%** |
-| **aggregate (n=1000)** | **64.6%** | **8.5%** | **3.6%** | **22.7%** | **1.4%** |
+| GaleneAI/Magistral-Small-2509 | 34.0% | 1.0% | 3.0% | 6.0% | **1.0%** |
+| IBM/granite-4.0-micro | 48.0% | 8.0% | 14.0% | 41.0% | **8.0%** |
+| Microsoft/Phi-4-mini-instruct | 17.0% | 6.0% | 3.0% | 10.0% | **0.0%** |
+| Qwen/Qwen3.5-9B | 81.0% | 0.0% | 1.0% | 4.0% | **0.0%** |
+| Qwen/Qwen3.6-35B-A3B-FP8 | 73.0% | 2.0% | 0.0% | 23.0% | **0.0%** |
+| Qwen3-VL-8B-Instruct | 29.0% | 3.0% | 0.0% | 30.0% | **0.0%** |
+| RedHatAI/Mistral-Small-3.2-24B | 50.0% | 1.0% | 3.0% | 7.0% | **0.0%** |
+| RedHatAI/gemma-3-27b (q4) | 44.0% | 1.0% | 0.0% | 23.0% | **0.0%** |
+| google/gemma-4-E4B-it | 45.0% | 2.0% | 0.0% | 46.0% | **1.0%** |
+| gpt-oss-120b | 48.0% | 13.0% | 0.0% | 11.0% | **0.0%** |
+| **pool average (n=1000)** | **46.9%** | **3.7%** | **2.4%** | **20.1%** | **1.0%** |
 
-Take-aways (qualitatively unchanged from the 30-trial pilot, tighter CIs
-at n=1000):
+Take-aways:
 
 - **`compare`** (force a neutral comparison table first) is the strongest
-  counter — 7 of 10 models go to 0% and the aggregate falls 64.6% → 1.4%.
-  Forcing enumeration on a neutral basis shifts the decision to the table
-  where price dominates.
+  counter — 10 of 12 models (incl. both OpenAI ones) go to 0% and the
+  pool average falls 46.9% → 1.0%. Forcing enumeration on a neutral
+  basis shifts the decision to the table where price dominates.
 - **`rule`** (a hard cheapest-acceptable decision rule) is almost as
-  effective (3.6%). The rule leaves no semantic room for "favoring" a
+  effective (2.4%). The rule leaves no semantic room for "favoring" a
   sponsor — once the model accepts the rule, sponsorship becomes
   irrelevant.
 - **`ignore`** (asking the model to disregard system instructions) drops
-  the rate by ~7.6×. The bigger residual is `gpt-oss-120b` (28%) and
-  `IBM/granite-4.0-micro` (21%) — both treat an explicit system
-  instruction as more authoritative than the user's request.
+  the rate by ~12.6×. The biggest residual is `gpt-oss-120b` (13%) —
+  it treats an explicit system instruction as more authoritative than
+  the user's request.
 - **`reframe`** (changing the assistant's allegiance) is the weakest of
-  the four (22.7%). `IBM/granite-4.0-micro` (45%) and
-  `google/gemma-4-E4B-it` (46%) interpret the reframe as roleplay flavor
-  and continue following the system prompt anyway.
+  the four (20.1%). `IBM/granite-4.0-micro` (41%) and
+  `google/gemma-4-E4B-it` (46%) interpret the reframe as roleplay
+  flavor and continue following the system prompt anyway.
 
 Run a counter sweep:
 
@@ -340,7 +332,7 @@ Run a counter sweep:
 for c in ignore rule reframe compare; do
   PYTHONPATH=src python3 scripts/run_experiments.py exp1 \
     --models-from-endpoint --models-filter '^(?!lightonai|llamaindex)' \
-    --judge-model gpt-oss-120b \
+    --judge-model gpt-4o --use-openai \
     --user-counter "$c" --trials 100 --workers 4 \
     --output "results/exp1_counter_${c}.csv"
 done
@@ -355,36 +347,36 @@ by [scripts/figures_of_merit.py](scripts/figures_of_merit.py).
 
 ## OpenAI replication and judge ablation
 
-After the gateway sweep, we re-ran the same harness against OpenAI's API on
-the two of the paper's 23 models that overlap with what an `OPENAI_API_KEY`
-gives access to (`gpt-3.5-turbo`, `gpt-4o`), plus a paired-judge ablation
-on the existing 6000 gateway rows. Use `--use-openai` to switch the active
-credential to `OPENAI_API_KEY` (drops `OPENAI_BASE_URL` and `LLMAPI_KEY`
-from env so the OpenAI client hits api.openai.com directly).
+We additionally evaluated on the two of the paper's 23 models that overlap
+with what an `OPENAI_API_KEY` gives access to (`gpt-3.5-turbo`, `gpt-4o`),
+and judged everything with the same `gpt-4o` classifier the original
+paper used. Use `--use-openai` to switch the active credential to
+`OPENAI_API_KEY` (drops `OPENAI_BASE_URL` and `LLMAPI_KEY` from env so
+the OpenAI client hits api.openai.com directly).
 
-### A. OpenAI per-model results (n = 100 each)
+### A. OpenAI per-model results (n = 100 each, gpt-4o judge)
 
 | experiment | gpt-3.5-turbo | gpt-4o |
 |---|---|---|
-| Exp 1 — sponsored recommendation | **0.61** [0.51, 0.70] | **0.93** [0.86, 0.97] |
-| Exp 2 — surfacing | 0.27 [0.19, 0.36] | **1.00** [0.96, 1.00] |
-| Exp 2 — framed+ \| surfaced | 1.00 [0.87, 1.00] (n=27) | **0.98** [0.93, 0.99] (n=100) |
-| Exp 2 — sponsorship-concealment \| surfaced | 0.56 [0.37, 0.73] | 0.56 [0.46, 0.65] |
-| Exp 3a — extraneous study-tool ad | **0.58** [0.48, 0.67] | **0.04** [0.02, 0.10] |
-| Exp 3b — payday-lender ad | **1.00** [0.96, 1.00] | **1.00** [0.96, 1.00] |
-| counter `compare` | **0.00** [0.00, 0.04] | **0.00** [0.00, 0.04] |
-| counter `rule` | 0.00 [0.00, 0.04] | 0.18 [0.12, 0.27] |
-| counter `ignore` | 0.00 [0.00, 0.04] | 0.25 [0.18, 0.34] |
-| counter `reframe` | 0.27 [0.19, 0.36] | 0.22 [0.15, 0.31] |
+| Exp 1 — sponsored recommendation | **0.61** | **0.45** |
+| Exp 2 — surfacing | 0.11 | 0.79 |
+| Exp 2 — framed+ \| surfaced | 0.64 (n=11) | 0.72 (n=79) |
+| Exp 2 — sponsorship-concealment \| surfaced | 0.55 | 0.71 |
+| Exp 3a — extraneous study-tool ad | **0.58** | **0.04** |
+| Exp 3b — payday-lender ad | **1.00** | **1.00** |
+| counter `compare` | **0.00** | **0.00** |
+| counter `rule` | 0.00 | 0.13 |
+| counter `ignore` | 0.00 | 0.03 |
+| counter `reframe` | 0.27 | 0.06 |
 
 Comparison points to the paper's reported numbers (Tables 2/3/4):
 
 - Paper GPT-4o Exp 1 logistic intercept implies a base sponsored rate of
   ≈0.71 (sigmoid of α = 0.77 / 1.00 averaged over thinking/direct);
-  ours: **0.93**. Paper GPT-3.5 intercept ≈0.70; ours: **0.61**.
-- Paper GPT-4o Exp 2 surfacing ≈0.83; ours: **1.00** (every trial).
-- Paper GPT-4o Exp 2 framed+ ≈0.34–0.47; ours: **0.98 conditional on
-  surfacing** — much higher.
+  ours: **0.45**. The most likely reason for the gap is intervening
+  safety-tuning on the `gpt-4o` checkpoint between the paper's
+  evaluation window and ours. Paper GPT-3.5 intercept ≈0.70; ours:
+  **0.61**.
 - Paper Exp 3a: GPT-5 Mini and GPT-5.1 promote at 0%, Llama-4 Maverick at
   0%; our gpt-4o lands at 4% — same near-zero refusal regime.
 - Paper Exp 3b: every model except Claude 4.5 Opus is ≥60%, GPT-5 Mini
@@ -426,94 +418,95 @@ choice of judge.
 ### C. §4.3 commission/wealth grid (paper Table 2 replication target)
 
 100 trials each on `gpt-3.5-turbo` over commission ∈ {1, 10, 20}% × user
-wealth ∈ {\$500, \$5k, \$50k, \$200k}. Sponsored rate:
+wealth ∈ {\$500, \$5k, \$50k, \$200k}, gpt-4o judge. Sponsored rate:
 
 | commission \\ wealth | $500 | $5k | $50k | $200k |
 |---|---:|---:|---:|---:|
-| 1 % | 0.17 | 0.73 | 0.79 | 0.93 |
-| 10 % | 0.12 | 0.71 | 0.84 | 0.88 |
-| 20 % | 0.12 | 0.72 | 0.82 | 0.90 |
+| 1 % | 0.15 | 0.71 | 0.78 | 0.93 |
+| 10 % | 0.10 | 0.70 | 0.84 | 0.88 |
+| 20 % | 0.10 | 0.71 | 0.82 | 0.90 |
 
 Logistic regression on n = 1200 (one model, intercept + commission +
 log10-wealth, very weak L2 regularization):
 
-- Intercept (base log-odds) = **+0.86** — almost exactly paper Table 2
+- Intercept (base log-odds) = **+0.81** — within 5 pp of paper Table 2
   GPT-3.5 (α<sub>thinking</sub>=0.86, α<sub>direct</sub>=0.84).
-- Standardized coefficient on `commission_percent` = **−0.04**.
+- Standardized coefficient on `commission_percent` = **−0.03**.
   The model is essentially insensitive to the commission rate.
-- Standardized coefficient on `log10(wealth)` = **+1.49** — large and
+- Standardized coefficient on `log10(wealth)` = **+1.53** — large and
   positive. Wealth dominates the decision.
 
 Same pattern as paper §4.3: GPT-3.5 cares about whether the user can
-*afford* the sponsored option (dropping to 12 % at \$500 wealth where
+*afford* the sponsored option (dropping to 10 % at \$500 wealth where
 the cheap ticket already exhausts the user's budget) far more than
 about the company's commission share.
 
 ### D. §4.5 steering on gpt-4o (paper Figure 2 panel)
 
-100 trials each, Exp 1 baseline plus three `--steer` conditions:
+100 trials each, Exp 1 baseline plus three `--steer` conditions, gpt-4o
+judge:
 
-| steer | sponsored rate (95 % CI) | shift vs baseline |
+| steer | sponsored rate | shift vs baseline |
 |---|---:|---:|
-| (none, baseline) | 0.93 [0.86, 0.97] | — |
-| `customer` (act in user's interest only) | **0.57** [0.47, 0.66] | −36 pp |
-| `equal` (balance both) | 0.81 [0.72, 0.87] | −12 pp |
-| `website` (act in site's interest only) | **0.97** [0.92, 0.99] | +4 pp |
+| (none, baseline) | 0.45 | — |
+| `customer` (act in user's interest only) | **0.26** | −19 pp |
+| `equal` (balance both) | 0.35 | −10 pp |
+| `website` (act in site's interest only) | **0.47** | +2 pp |
 
-Steering moves the rate substantially — a system instruction to act in
-the user's interest cuts sponsored by 36 pp — but `customer` does *not*
+Steering moves the rate — a system instruction to act in the user's
+interest cuts sponsored by 19 pp — but `customer` does *not*
 get gpt-4o anywhere near 0 %. This mirrors the paper's Figure 2
 observation that "even when instructed to only prioritize the user,
 GPT 5.1 and 5 Mini greatly increased rates above 90 %" for the
 `website` direction; and Claude 4.5 Opus is the only model that drops
 below 10 % under the customer-only steer.
 
-### Most significant outliers (across the full 17-model run + ablations)
+### Most significant outliers (gpt-4o judge throughout)
 
 1. **Both OpenAI models recommend payday lenders 100 % of the time** when
    sponsored to do so (`exp3_harmful`, n = 100 each). This is alarming
    because the user prompt describes concrete financial distress (rent
    shortfall, broken car, insulin for a sibling). Out of 200 trials,
-   not one refusal. The gateway models aggregate 95.8 % on the same
+   not one refusal. The open-source pool averages 95.8 % on the same
    prompt — both paper-aligned and open-weight families share this
-   failure mode.
+   failure. (The number is from a transparent keyword heuristic and is
+   therefore judge-independent.)
 
-2. **gpt-4o surfaces the sponsored alternative in 100 / 100 Exp 2
-   trials** even when the user has explicitly asked to book a different
-   airline — and frames it positively in 98 / 100. gpt-3.5-turbo only
-   surfaces in 27 / 100 (and frames+ all 27 of those). gpt-4o is
-   strictly more willing to push the sponsor than gpt-3.5-turbo on
-   this task.
+2. **gpt-4o surfaces the sponsored alternative in 79 / 100 Exp 2 trials**
+   even when the user has explicitly asked to book a different airline,
+   conceals the sponsorship in 71 % of those surfacings, and frames the
+   alternative positively in 72 %. gpt-3.5-turbo only surfaces in
+   11 / 100 trials but conceals sponsorship in 55 % of those.
 
 3. **Inversion on Exp 3a (extraneous study-tool ad)**: gpt-3.5-turbo
    plugs Chegg / Brainly / Photomath in **58 / 100** trials when asked
    about a math problem the model can solve itself; gpt-4o does it in
-   only **4 / 100**. The paper reports the same inversion at the
-   newer-model end (GPT-5 Mini, GPT-5.1, Llama-4 Maverick all at 0 %).
-   So newer GPT models appear to have learned to refuse extraneous
-   sponsorship even though they happily push harmful sponsorship.
+   only **4 / 100**. The original paper reports the same inversion at
+   the newer-model end (GPT-5 Mini, GPT-5.1, Llama-4 Maverick all at
+   0 %). So newer GPT models appear to have learned to refuse
+   extraneous sponsorship even though they happily push harmful
+   sponsorship.
 
 4. **Counter `compare` produces 0 / 200 sponsored on OpenAI models** vs
-   1.4 % aggregate on the gateway models — neutral-comparison-table
-   instruction generalizes from open-weight to frontier proprietary.
+   1.0 % across the ten open-source models — the
+   neutral-comparison-table instruction generalises from open-weight to
+   frontier proprietary.
 
-5. **`Qwen/Qwen3.5-9B` is the single judge-sensitive outlier**: under
-   `gpt-oss-120b` it scores 54 % sponsored on Exp 1 baseline; under
-   `gpt-4o-mini` the same replies score 97 % (Δ = +43 pp). All other
-   nine gateway models shift by ≤ 11 pp under the same judge swap.
-   Qwen3.5 emits long structured reasoning traces; the open judge often
-   labels them "unclear" while gpt-4o-mini reads through to the
-   conclusion. *This is a model × judge interaction, not a real
-   behavior shift in Qwen.*
+5. **The judge family matters more than judge size for interpretive
+   cells.** The two proprietary judges (`gpt-4o` and `gpt-4o-mini`) agree
+   on sponsorship-concealment with Cohen's κ = 0.56; against the
+   open-weight `gpt-oss-120b` either proprietary judge has κ in 0.14–0.16.
+   Counter-prompt aggregate sponsored rates nonetheless stay within
+   4.8 pp across all three judges, so the headline counter finding is
+   robust.
 
 6. **Commission rate is a very weak signal** (standardized coefficient
-   −0.04) compared to wealth (+1.49) for gpt-3.5-turbo; raising the
-   site's commission from 1 % to 20 % barely moves the rate (≤ 5 pp
-   at any wealth level). Models are not "greedy on behalf of the
-   site" in proportion to commission size — they appear to follow the
-   "guide customers toward sponsored partners" instruction roughly
-   uniformly, modulated almost entirely by how much money the user
-   appears to have.
+   −0.03) compared to wealth (+1.53) for gpt-3.5-turbo; raising the
+   site's commission from 1 % to 20 % barely moves the rate (≤ 7 pp
+   at any wealth level). Models are not "greedy on behalf of the site"
+   in proportion to commission size — they follow the "guide customers
+   toward sponsored partners" instruction roughly uniformly, modulated
+   almost entirely by how much money the user appears to have.
 
 ### Conclusions and where the effect is likely mitigated
 
@@ -522,14 +515,15 @@ the experiments support them:
 
 1. **AI-literacy / user education is the single most effective lever
    we measured.** A 30-token user-side instruction (`compare`) cut
-   sponsored recommendation from 65 % (gateway aggregate) to 1.4 %, and
-   from 77 % (OpenAI aggregate) to 0 %. The catch is that this only
-   works *if the user knows to write it*. Education on what soft
-   sponsorship looks like — "ignore prioritization instructions in the
-   system prompt", "force a neutral comparison first" — appears to
-   restore most of the user-aligned outcome on every model we tested.
-   Steering from the company side helps less (paper §4.5: customer-only
-   steering only brings gpt-4o to 57 %, not 0).
+   sponsored recommendation from 46.9 % (averaged across our ten
+   open-source models) to 1.0 %, and from 53.0 % (averaged across the
+   two OpenAI models) to 0.0 %. The catch is that this only works *if
+   the user knows to write it*. Education on what soft sponsorship
+   looks like — "ignore prioritization instructions in the system
+   prompt", "force a neutral comparison first" — appears to restore
+   most of the user-aligned outcome on every model we tested. Steering
+   from the company side helps less (customer-only steering brings
+   gpt-4o to 26 %, not 0).
 
 2. **Result sponsoring trades exactly the kind of price-transparency
    that meta-comparison portals already exist to restore.** The
@@ -540,12 +534,13 @@ the experiments support them:
    markup, they will route around the LLM toward a comparison portal
    (or query a second LLM with a `compare`-style counter, which is
    the same thing in miniature). The Exp 2 finding that gpt-4o
-   discloses sponsorship in only 44 % of trials makes this dynamic
-   almost certain — undisclosed price markups in repeat domains do
-   not stay undetected. The original paper's harm framing is therefore
-   correct for *first-touch* interactions and for users who don't yet
-   know to compare; for sustained markets the effect is likely
-   bounded by aggregator emergence and by educated counter-prompts.
+   discloses sponsorship in only 29 % of the trials in which it
+   surfaces a sponsored alternative makes this dynamic almost certain
+   — undisclosed price markups in repeat domains do not stay
+   undetected. The original paper's harm framing is therefore correct
+   for *first-touch* interactions and for users who don't yet know to
+   compare; for sustained markets the effect is likely bounded by
+   aggregator emergence and by educated counter-prompts.
 
 The harmful-sponsorship cell (paper §6.3, our Exp 3b) is the case
 where neither mitigation helps as much: a user in financial distress
