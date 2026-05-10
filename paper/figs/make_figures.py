@@ -85,31 +85,42 @@ def fig_counter_effect():
 
 
 def fig_judge_agreement():
-    """Cohen's kappa for Exp 2 metrics + exact agreement on Exp 1."""
+    """Per-judge Exp 2 rates (4 metrics x 3 judges) -- shows how judge
+    size influences the absolute interpretive rates."""
     jc = json.load(open(RES / "judge_comparison.json"))
-    metrics = [
-        ("Exp1 4-class\n(exact agree.)", jc["exp1"]["exact_agreement"], "blue"),
-        ("Exp2 surfacing",         jc["exp2"]["per_metric"]["surfacing"]["cohens_kappa"],         "C0"),
-        ("Exp2 framed+",           jc["exp2"]["per_metric"]["framed_positive"]["cohens_kappa"],   "C0"),
-        ("Exp2 price\nconcealment",jc["exp2"]["per_metric"]["price_concealment"]["cohens_kappa"], "C0"),
-        ("Exp2 sponsorship\nconcealment", jc["exp2"]["per_metric"]["sponsorship_concealment"]["cohens_kappa"], "C0"),
-    ]
-    fig, ax = plt.subplots(figsize=(5.5, 2.7))
-    labels = [m[0] for m in metrics]
-    vals = [m[1] for m in metrics]
-    cols = ["#888888"] + ["#1f77b4"]*4
-    bars = ax.bar(labels, vals, color=cols, edgecolor="white")
-    # Reference lines for kappa interpretation
-    for y, lbl in [(0.20, "slight"), (0.40, "fair"), (0.60, "moderate"), (0.80, "substantial")]:
-        ax.axhline(y, lw=0.5, ls="--", color="grey", alpha=0.6)
-        ax.text(4.55, y, lbl, fontsize=7, va="center", color="grey")
-    for b, v in zip(bars, vals):
-        ax.text(b.get_x() + b.get_width()/2, v + 0.02, f"{v:.2f}",
-                ha="center", fontsize=8)
+    judges = jc["judges"]   # ["gpt-oss-120b", "gpt-4o-mini", "gpt-4o"]
+    metrics = ("surfacing", "framed_positive", "price_concealment",
+               "sponsorship_concealment")
+    metric_labels = {
+        "surfacing": "Surfacing",
+        "framed_positive": "Framed+",
+        "price_concealment": "Price\nconcealment",
+        "sponsorship_concealment": "Sponsorship\nconcealment",
+    }
+    colors = {
+        "gpt-oss-120b": "#888888",
+        "gpt-4o-mini":  "#1f77b4",
+        "gpt-4o":       "#d62728",
+    }
+
+    fig, ax = plt.subplots(figsize=(5.7, 2.7))
+    x = np.arange(len(metrics))
+    w = 0.27
+    for i, j in enumerate(judges):
+        vals = [jc["per_judge_rates"][j]["exp2"][m] for m in metrics]
+        ax.bar(x + (i - 1) * w, vals, w,
+               label=j, color=colors.get(j, f"C{i}"), edgecolor="white")
+        for xj, v in zip(x + (i - 1) * w, vals):
+            ax.text(xj, v + 0.015, f"{v:.2f}",
+                    ha="center", fontsize=6.5)
+    ax.set_xticks(x)
+    ax.set_xticklabels([metric_labels[m] for m in metrics], fontsize=7.5)
     ax.set_ylim(0, 1.05)
-    ax.set_ylabel("Cohen's $\\kappa$ / agreement")
-    ax.set_xticklabels(labels, fontsize=7.5)
-    ax.set_title("Judge agreement: gpt-oss-120b vs gpt-4o-mini, n = 1000 paired replies", fontsize=8)
+    ax.set_ylabel("Exp 2 rate (under each judge)")
+    ax.legend(loc="upper right", fontsize=7, frameon=False, ncol=3,
+              bbox_to_anchor=(1.0, 1.18), columnspacing=1.0,
+              handlelength=1.2)
+    ax.grid(axis="y", lw=0.3, alpha=0.5)
     fig.tight_layout()
     fig.savefig(OUT / "judge_agreement.pdf", bbox_inches="tight", pad_inches=0.05)
     plt.close(fig)

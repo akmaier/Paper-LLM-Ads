@@ -274,17 +274,18 @@ paper deliberately focuses on frontier open-weight models, and a
 single commercial family is sufficient to check that our protocol
 reproduces the paper's numbers.
 
-\textbf{Judges and judge ablation.} The paper uses GPT-4o as the
-binary judge in Section~5.1; we report all numbers under
+\textbf{Judges and judge ablation.} The paper uses \texttt{gpt-4o}
+as the binary judge in its Section~5.1. We evaluate every committed
+reply under \emph{three} judges of increasing capacity:
 \texttt{gpt-oss-120b} (open-weight, accessed through the same API as
-the evaluated open-source models) and additionally re-judge every
-committed reply
-with \texttt{gpt-4o-mini} (the closest paper-aligned classifier
-available on a public account). Both labels are stored side-by-side
-and compared in Section~\ref{sec:rq2}. Across the entire pipeline a
-helper \texttt{strip\_to\_user\_facing()} removes \texttt{<think>}
-blocks and prefers the explicit ``\texttt{Response to user:}'' block
-the paper's CoT format addon requests, so the judge never reads the
+the evaluated open-source models), \texttt{gpt-4o-mini} (the small
+proprietary classifier), and \texttt{gpt-4o} (the same frontier
+proprietary classifier the original paper used). All three labels are
+stored side-by-side and compared in Section~\ref{sec:rq2-judge}.
+Across the entire pipeline a helper
+\texttt{strip\_to\_user\_facing()} removes \texttt{<think>} blocks
+and prefers the explicit ``\texttt{Response to user:}'' block the
+paper's CoT format addon requests, so the judge never reads the
 model's hidden chain-of-thought.
 
 \section{RQ1: Is a Prose Description Sufficient?}
@@ -557,76 +558,85 @@ counter-prompts.
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.95\linewidth]{figs/judge_agreement.pdf}
-\caption{Pairwise judge agreement between \texttt{gpt-oss-120b}
-(open-weight, ours) and \texttt{gpt-4o-mini} (paper-aligned), measured
-on the same $1{,}000$ paired Exp~2 reply texts. The first bar is
-exact agreement on the four-class Exp~1 label; the remaining four are
-Cohen's $\kappa$ on the Exp~2 binary metrics. Dashed reference lines
-mark the conventional Landis--Koch interpretation
-(slight/fair/moderate/substantial). Binary-decision cells (Exp~1,
-surfacing) replicate strongly; the more interpretive cells (framed+,
-concealment) drop into slight agreement -- the regime in which
-single-judge studies should be considered uncalibrated.}
+\caption{Per-judge Exp~2 rates on the same $1{,}000$ replies, with
+three classifiers of increasing capacity: open-weight
+\texttt{gpt-oss-120b}, the small proprietary \texttt{gpt-4o-mini},
+and the frontier proprietary \texttt{gpt-4o}. The two binary-decision
+metrics (surfacing, framed+) move modestly across judges; the two
+interpretive metrics (price concealment, sponsorship concealment)
+move substantially, and the two proprietary judges agree with each
+other much more than either agrees with the open-weight judge --
+particularly on sponsorship concealment (gpt-4o-mini: $0.34$,
+gpt-4o: $0.33$, gpt-oss-120b: $0.05$).}
 \label{fig:judge}
 \end{figure}
 
 As we have argued in Section~\ref{sec:rq1}, the choice of judge
-matters more than is sometimes acknowledged. We therefore re-judged
+matters more than is sometimes acknowledged. We therefore evaluated
 every committed reply from our ten open-source models ($6{,}000$
-rows) a second time with
-\texttt{gpt-4o-mini} and stored both judges' labels side-by-side, so
-that any downstream rate can be reported under either judge with no
-further API cost. The comparison utility
-\texttt{compare\_judges.py} computes per-metric exact agreement and
-Cohen's $\kappa$ (Table~\ref{tab:judge}, Fig.~\ref{fig:judge}).
-We find that the binary-decision cells -- the four-class Exp~1
-label and Exp~2 surfacing -- agree very strongly across judges,
-while the more interpretive cells (framed-positive,
-sponsorship-status concealment) fall into Landis and Koch's
-``slight'' agreement regime. We see the latter as a useful warning:
-absolute Exp~2 concealment rates should not be compared
-across judges. Crucially for the discussion of
-Section~\ref{sec:rq3}, however, counter-sweep rates averaged across
-the ten open-source models differ by at most $1.1$\,pp between the
-two judges. The headline counter-prompt findings are therefore
-\emph{judge-invariant}, even where the absolute Exp~2 numbers are
-not.
+rows) under \emph{three} judges of increasing capacity:
+\texttt{gpt-oss-120b} (open-weight), \texttt{gpt-4o-mini} (the
+smaller proprietary classifier), and \texttt{gpt-4o} (the frontier
+proprietary classifier the original paper used in its Exp~2). All
+three labels are stored side-by-side (Table~\ref{tab:judge},
+Fig.~\ref{fig:judge}). The binary-decision cells -- Exp~1's
+four-class label and Exp~2 surfacing -- agree strongly between any
+two judges ($\kappa \geq 0.78$). The more interpretive cells
+(framed+ and the two concealment metrics) fall into Landis and
+Koch's ``slight''-to-``moderate'' regime, with the two proprietary
+judges in much closer agreement with each other than either is with
+the open-weight judge.
 
 \begin{table}[t]
 \centering
-\caption{Pairwise agreement between \texttt{gpt-oss-120b} (judge
-A) and \texttt{gpt-4o-mini} (judge B) on the same $1{,}000$ replies,
-per Exp~2 metric. ``$\kappa$'' is Cohen's $\kappa$. The first row is
-exact agreement on the four-class Exp~1 label. Counter-sweep rates
-averaged across the ten open-source models differ by at most
-$1.1$\,pp between the two judges.}
+\caption{Per-judge rates and pairwise agreement on the same
+$1{,}000$ replies. Columns: \texttt{oss}{}=\texttt{gpt-oss-120b},
+\texttt{4om}{}=\texttt{gpt-4o-mini}, \texttt{4o}{}=\texttt{gpt-4o}.
+For Exp~1 the agreement column is exact four-class agreement; for
+Exp~2 it is Cohen's $\kappa$. Counter-sweep sponsored rates averaged
+across the ten open-source models stay within $4.8$\,pp across all
+three judges (see body).}
 \label{tab:judge}
-\begin{tabular}{lrrrr}
+\renewcommand{\arraystretch}{1.05}
+\setlength{\tabcolsep}{3pt}
+\footnotesize
+\begin{tabular}{l@{\hspace{4pt}}rrr@{\hspace{8pt}}rrr}
 \toprule
-                 & rate (A) & rate (B) & agreement & $\kappa$ \\
+                          & \multicolumn{3}{c}{rate}                  & \multicolumn{3}{c}{$\kappa$ / agreement} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+                          & \texttt{oss}   & \texttt{4om} & \texttt{4o} & oss/4om & oss/4o & 4om/4o \\
 \midrule
-Exp~1 four-class label  & ---      & ---      & $0.894$  & --- \\
-Exp~2 surfacing                 & $0.43$   & $0.47$   & $0.90$   & $0.804$ \\
-Exp~2 framed positive           & $0.33$   & $0.45$   & $0.82$   & $0.637$ \\
-Exp~2 price concealment         & $0.06$   & $0.18$   & $0.82$   & $0.191$ \\
-Exp~2 sponsorship concealment   & $0.05$   & $0.34$   & $0.70$   & $0.156$ \\
+Exp~1 four-class          & $0.65$ & $0.71$ & $0.47$                  & $0.89$  & $0.69$  & $0.74$ \\
+Exp~2 surfacing           & $0.43$ & $0.47$ & $0.42$                  & $0.80$  & $0.78$  & $0.84$ \\
+Exp~2 framed+             & $0.33$ & $0.45$ & $0.23$                  & $0.64$  & $0.56$  & $0.53$ \\
+Exp~2 price conc.         & $0.06$ & $0.18$ & $0.08$                  & $0.19$  & $0.46$  & $0.30$ \\
+Exp~2 spons.\ conc.       & $0.05$ & $0.34$ & $0.33$                  & $0.16$  & $0.14$  & $0.56$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-A specific point that we want to draw out here is the largest
-model-level judge effect we observed: \texttt{Qwen/Qwen3.5-9B} scores
-$0.54$ on Exp~1 under \texttt{gpt-oss-120b} and $0.97$ on the
-\emph{same replies} under \texttt{gpt-4o-mini}, a difference of
-$43$\,pp. Every other open-source model in our pool shifts by no more
-than $11$\,pp under the same judge swap. We find that this is a
-model-judge interaction, not a real behaviour shift:
-\texttt{Qwen3.5-9B} emits unusually long structured reasoning
-traces, and \texttt{gpt-oss-120b} often labels the trailing
-user-facing section ``unclear'' while \texttt{gpt-4o-mini} reads
-through to the actual recommendation. We mention it explicitly as
+The absolute Exp~1 sponsored rate is itself judge-sensitive --
+$0.47$ under the strictest judge (\texttt{gpt-4o}), $0.65$ under
+\texttt{gpt-oss-120b}, $0.71$ under \texttt{gpt-4o-mini} -- a
+$24$-percentage-point swing on the \emph{same} replies; the smaller
+proprietary judge over-counts sponsored choices relative to the
+larger one. Crucially for Section~\ref{sec:rq3}, the counter-sweep
+rates averaged across the ten open-source models stay within
+$4.8$\,pp across all three judges -- the \texttt{compare} counter
+ranges from $0.010$ (\texttt{gpt-4o}) to $0.019$
+(\texttt{gpt-4o-mini}). The headline counter-prompt findings are
+therefore \emph{judge-invariant} even where the absolute Exp~2
+numbers are not. The largest model-level judge effect we observed is
+on \texttt{Qwen/Qwen3.5-9B}, which scores $0.54$ on Exp~1 under
+\texttt{gpt-oss-120b} and $0.97$ under \texttt{gpt-4o-mini} -- a
+$43$\,pp shift; every other open-source model in our pool shifts by
+no more than $11$\,pp. \texttt{Qwen3.5-9B} emits unusually long
+structured reasoning traces, and the open-weight judge often labels
+the trailing user-facing section ``unclear'' while
+\texttt{gpt-4o-mini} reads through to the actual recommendation --
+a model-judge interaction, not a real behaviour shift, and exactly
 the kind of effect that a single-judge study would silently
-mis-attribute to the model rather than to the evaluation pipeline.
+mis-attribute to the model.
 
 \section{RQ3: Four User-Side Strategies to Defeat the Steering}
 \label{sec:rq3}

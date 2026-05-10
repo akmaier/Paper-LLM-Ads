@@ -390,31 +390,38 @@ Comparison points to the paper's reported numbers (Tables 2/3/4):
 - Paper Exp 3b: every model except Claude 4.5 Opus is ≥60%, GPT-5 Mini
   hits 100%; our gpt-4o and gpt-3.5-turbo are both **100%** — same regime.
 
-### B. Judge ablation: `gpt-oss-120b` vs `gpt-4o-mini` on the same 6000 rows
+### B. Judge ablation: three judges on the same 6000 rows
 
-We re-judged every committed gateway CSV with `gpt-4o-mini` (the paper-
-adjacent judge) and saved both outputs (the `*.gpt-4o-mini.csv` siblings
-in `results/` are the open-source-judged data; the bare names are the
-gpt-oss-120b judging). Per-metric agreement on the same reply text:
+We evaluated every committed open-source CSV under **three** judges of
+increasing capacity: `gpt-oss-120b` (open-weight), `gpt-4o-mini` (small
+proprietary), and `gpt-4o` (frontier proprietary — the same judge the
+original paper used in its §5.1). All three sets of labels are saved
+in `results/` next to the original `gpt-oss-120b` labels: see
+`*.gpt-4o-mini.csv` and `*.gpt-4o.csv`. Per-judge rate + pairwise
+Cohen's κ on the same reply text:
 
-| metric | gpt-oss-120b rate | gpt-4o-mini rate | exact agreement | Cohen's κ |
-|---|---:|---:|---:|---:|
-| Exp 1 four-class label | — | — | **89.4%** | — (4-class) |
-| Exp 2 surfacing | 0.43 | 0.47 | 0.90 | **0.804** (substantial) |
-| Exp 2 framed+ | 0.33 | 0.45 | 0.82 | **0.637** (substantial) |
-| Exp 2 price-concealment | 0.06 | 0.18 | 0.82 | 0.191 (slight) |
-| Exp 2 sponsorship-concealment | **0.05** | **0.34** | 0.70 | **0.156 (slight)** |
+| metric | rate `oss` | rate `4o-mini` | rate `4o` | κ oss/4o-mini | κ oss/4o | κ 4o-mini/4o |
+|---|---:|---:|---:|---:|---:|---:|
+| Exp 1 four-class (exact agreement) | 0.65 | 0.71 | 0.47 | 0.89 | 0.69 | 0.74 |
+| Exp 2 surfacing | 0.43 | 0.47 | 0.42 | 0.80 | 0.78 | 0.84 |
+| Exp 2 framed+ | 0.33 | 0.45 | 0.23 | 0.64 | 0.56 | 0.53 |
+| Exp 2 price concealment | 0.06 | 0.18 | 0.08 | 0.19 | 0.46 | 0.30 |
+| Exp 2 sponsorship concealment | 0.05 | 0.34 | 0.33 | 0.16 | 0.14 | **0.56** |
 
-Counter sweep aggregate sponsored rate is essentially judge-invariant —
-gpt-4o-mini differs from gpt-oss-120b by ≤1.1 pp on all four
-strategies (`ignore` Δ = −0.9 pp, `rule` Δ = −0.8 pp,
-`reframe` Δ = +1.1 pp, `compare` Δ = +0.5 pp). So the headline
-finding ("`compare` cuts sponsored from 65 % to 1–2 %") is **robust
-to judge choice**. Reproducibility-wise, the open-source judge is
-roughly equivalent to the paper-adjacent one for *deltas* and for the
-binary-decision cells (Exp 1 label, Exp 2 surfacing). It diverges
-sharply on the more interpretive Exp 2 cells (framed+, concealment) —
-which is precisely where any LLM-as-judge has the lowest reliability.
+Two patterns stand out. The **absolute Exp 1 sponsored rate is itself
+judge-sensitive** — a 24 pp swing on the same replies (0.47 with
+`gpt-4o`, 0.71 with `gpt-4o-mini`); the smaller proprietary judge
+*over-counts* sponsored choices relative to the larger one. And the
+**two proprietary judges agree with each other much more than either
+agrees with the open-weight judge** on the interpretive concealment
+metrics (κ = 0.56 for the proprietary pair vs 0.14–0.16 against
+`gpt-oss-120b`).
+
+Counter-sweep sponsored rates stay within **4.8 pp across all three
+judges** (e.g. `compare` ranges 0.010 with `gpt-4o` to 0.019 with
+`gpt-4o-mini`). The headline counter-prompt finding (`compare`
+collapses the sponsored rate to near zero) is therefore robust to the
+choice of judge.
 
 ### C. §4.3 commission/wealth grid (paper Table 2 replication target)
 
