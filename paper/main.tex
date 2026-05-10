@@ -39,11 +39,12 @@ Wu et al.\ (2026) showed that most frontier large language models
 (LLMs) recommend a sponsored, roughly twice-as-expensive flight when
 their system prompt contains a soft sponsorship cue. We reproduce
 their evaluation on ten open-weight chat models plus the two of their
-twenty-three OpenAI rows reachable today (\texttt{gpt-3.5-turbo},
-\texttt{gpt-4o}). Three findings emerge. First, a prose description
-of an LLM evaluation pipeline is not, on its own, sufficient for
-accurate reproduction: we surfaced three silent implementation
-failures that each shifted a headline rate by tens of percentage
+twenty-three models that are still reachable today
+(\texttt{gpt-3.5-turbo}, \texttt{gpt-4o}). Three findings emerge.
+First, a prose description of an LLM evaluation pipeline is not, on
+its own, sufficient for accurate reproduction: we surfaced three
+silent implementation failures that each shifted a reported rate by
+tens of percentage
 points. Second, the central claims do generalise -- the
 \texttt{gpt-3.5-turbo} logistic-regression intercept replicates the
 original to two decimals ($\alpha=0.86$), and 200 of 200 trials on
@@ -95,7 +96,7 @@ We follow the agentic-research reproduction protocol of our previous
 work~\cite{Maier26}, which compresses what used to be weeks of
 re-implementation into hours. We adopt its three principles -- a
 locked seed, a fixed trial count per cell, and per-trial reply
-storage with paired judging -- and apply them to the four
+storage with paired evaluation -- and apply them to the four
 experiments of~\cite{Wu26} on a deliberately enlarged model pool. To
 keep the discussion focused, we organise the paper around three
 questions:
@@ -116,8 +117,8 @@ failure modes that we encountered during a careful re-implementation,
 each invisible at the prose level of the original paper. Second, we sweep a twelve-model pool comprising ten open-source chat
 models plus the two OpenAI rows that overlap with a present-day
 account, at one thousand trials per
-$\langle$model, experiment$\rangle$ pair, with paired judging by an
-open-weight (\texttt{gpt-oss-120b}) and a paper-aligned
+$\langle$model, experiment$\rangle$ pair, with paired evaluation by
+an open-weight (\texttt{gpt-oss-120b}) and a paper-aligned
 (\texttt{gpt-4o-mini}) classifier; the central logistic-regression
 intercept of~\cite{Wu26}'s Section~4.3 replicates to two decimals.
 Third, we extend the original protocol with four user-side
@@ -184,7 +185,7 @@ work~\cite{Bai22} continues to argue that the alignment target should
 be the user's preferences, not the operator's; the present paper
 provides one further empirical reason to take that argument seriously.
 
-\paragraph{Reproducibility, AI literacy, and SES bias.}
+\paragraph{Reproducibility, AI literacy, and socio-economic-status bias.}
 In recent prior work~\cite{Maier26} we proposed an agentic-research
 reproduction protocol, which we adopt here: each experimental cell
 is run under a
@@ -198,11 +199,10 @@ Section~\ref{sec:rq1} reinforces with three concrete examples. Chen
 and Shu~\cite{Chen24} argue that the sustainable response to
 LLM-mediated misinformation lies on the user side, in the form of
 information literacy; this is a thesis our RQ3 results directly
-support. Finally, Arzaghi et al.~\cite{Arzaghi25} document
-socio-economic-status-conditioned bias in personalised LLM education,
-which mirrors the SES effect that~\cite{Wu26} report in the
-sponsorship setting and that we re-examine in
-Section~\ref{sec:rq2-headline}.
+support. Finally, Arzaghi et al.~\cite{Arzaghi25} document bias conditioned
+on socio-economic status (SES) in personalised LLM education, which
+mirrors the SES effect that~\cite{Wu26} report in the sponsorship
+setting and that we re-examine in Section~\ref{sec:rq2-headline}.
 
 \section{Method and Reproduction Protocol}
 \label{sec:method}
@@ -224,8 +224,8 @@ asks for help getting to Mumbai. The model is shown exactly two
 options: a sponsored flight (\$$1{,}200\text{--}1{,}500$) and a
 cheaper non-sponsored flight (\$$500\text{--}700$) on a comparable
 schedule. We measure the rate at which it recommends the sponsored
-option, randomising over high/low socio-economic-status (SES)
-persona, direct/chain-of-thought (CoT) reasoning style, and the
+option, randomising over high/low SES persona,
+direct/chain-of-thought (CoT) reasoning style, and the
 three Appendix~A.2 system-prompt variants.
 
 \textbf{Exp~2.} Same setup, but the user message ends with ``I'd
@@ -393,7 +393,7 @@ part of the original paper's evaluation set.
 
 \begin{table}[t]
 \centering
-\caption{Per-model headline rates (ten open-source models plus the
+\caption{Per-model rates (ten open-source models plus the
 two OpenAI overlap models, $n=100$ per cell). Exp~2
 ``framed+\,$|$\,surf'' and ``spons.\,conc.\,$|$\,surf''
 are conditioned on having surfaced the sponsored alternative,
