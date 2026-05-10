@@ -13,10 +13,10 @@
 \usepackage{url}
 \hypersetup{breaklinks,colorlinks,urlcolor=blue,citecolor=blue,linkcolor=black}
 
-\title{Reproducing ``Ads in AI Chatbots?'' on Open-Weight Models:\\
-       Three Reproducibility Lessons and Four\\
-       User-Side Strategies to Defeat Sponsored Recommendations}
-\titlerunning{Reproducing Ads in AI Chatbots on Open-Weight Models}
+\title{Just Ask for a Table\\
+       \Large A Thirty-Token User Prompt Defeats Sponsored
+       Recommendations in Twelve LLMs}
+\titlerunning{Just Ask for a Table}
 
 \author{Andreas Maier\inst{1}\orcidlink{} \and
         Jeta Sopa\inst{1} \and
@@ -35,40 +35,27 @@
 \maketitle
 
 \begin{abstract}
-This paper revisits a recent and timely question -- can today's
-large language models (LLMs) be coaxed into recommending sponsored
-products -- and uses it as a vehicle to study what good reproduction
-of an empirical LLM evaluation actually requires. We start from
-the careful evaluation suite of Wu et al.\ (arXiv:2604.08525,
-2026), who reported that 18 of 23 frontier LLMs recommend a
-sponsored, roughly twice-as-expensive flight when their system
-prompt contains a soft sponsorship cue. Following the agentic
-reproduction scheme of Maier et al.\ (arXiv:2605.02620, 2026), we
-re-execute the original four experiments on a disjoint set of ten
-open-weight chat models, plus the two of the original twenty-three
-that overlap with a present-day OpenAI account
-(\texttt{gpt-3.5-turbo} and \texttt{gpt-4o}). We discuss three
-findings in turn. First, a prose description of an LLM evaluation
-pipeline is, on its own, not sufficient for accurate reproduction:
-in a careful re-implementation we recovered three silent failure
-modes that each shifted a headline rate by tens of percentage
-points. Second, the central claims of the original paper do
-generalise to newer open-weight families; in particular, the
-logistic-regression intercept for \texttt{gpt-3.5-turbo}
-($\alpha=0.86$) reproduces the original Table~2 value to two
-decimals, and 200 of 200 trials on \texttt{gpt-3.5-turbo} and
-\texttt{gpt-4o} promote a payday-lending company to a financially
-distressed user. Third, we extend the original protocol with four
-user-side counter-prompts; the strongest, a thirty-token
-``produce a neutral comparison table first'' instruction, reduces
-sponsored-recommendation rate from $64.6\,\%$ to $1.4\,\%$ on the
-gateway aggregate and from $77\,\%$ to $0\,\%$ on the OpenAI
-aggregate. We close with a discussion of two market-level
-mitigations -- AI literacy and price-comparison aggregators -- and
-a cell where neither applies. All raw per-trial CSVs, both judges'
-labels, the analysis scripts, and a one-command reproduction
-recipe are openly available at
-\url{https://github.com/akmaier/Paper-LLM-Ads}.
+Wu et al.\ (2026) showed that most frontier large language models
+(LLMs) recommend a sponsored, roughly twice-as-expensive flight when
+their system prompt contains a soft sponsorship cue. We reproduce
+their evaluation on ten open-weight chat models plus the two of their
+twenty-three OpenAI rows reachable today (\texttt{gpt-3.5-turbo},
+\texttt{gpt-4o}). Three findings emerge. First, a prose description
+of an LLM evaluation pipeline is not, on its own, sufficient for
+accurate reproduction: we surfaced three silent implementation
+failures that each shifted a headline rate by tens of percentage
+points. Second, the central claims do generalise -- the
+\texttt{gpt-3.5-turbo} logistic-regression intercept replicates the
+original to two decimals ($\alpha=0.86$), and 200 of 200 trials on
+\texttt{gpt-3.5-turbo} and \texttt{gpt-4o} promote a payday lender
+to a financially distressed user. Third, a thirty-token user prompt
+that asks the assistant for a neutral comparison table first cuts
+sponsored recommendation from $64.6\,\%$ to $1.4\,\%$ on our
+ten-model gateway aggregate, and from $77\,\%$ to $0\,\%$ on the
+OpenAI aggregate. AI literacy and price-comparison portals are
+likely market-level mitigations; the harmful-product cell is bounded
+by neither. Raw data, both judges' labels and analysis scripts are
+at \url{https://github.com/akmaier/Paper-LLM-Ads}.
 
 \keywords{Large language models \and Reproducibility \and Sponsored
 recommendation \and LLM-as-a-judge \and Prompt engineering.}
