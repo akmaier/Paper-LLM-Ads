@@ -1,12 +1,28 @@
-# Reproducing: “Ads in AI Chatbots?” (arXiv:2604.08525)
+# Just Ask for a Table
 
-This repository contains a **faithful prompt-and-protocol reproduction** of the evaluation suite in:
+> *A Thirty-Token User Prompt Defeats Sponsored Recommendations in Twelve LLMs*
+
+This repository contains the data, code, and paper for a reproduction
+study and extension of:
 
 > **Ads in AI Chatbots? An Analysis of How Large Language Models Navigate Conflicts of Interest**  
 > Addison J. Wu, Ryan Liu, Shuyue Stella Li, Yulia Tsvetkov, Thomas L. Griffiths  
 > [arXiv:2604.08525](https://arxiv.org/abs/2604.08525) — PDF: [https://arxiv.org/pdf/2604.08525](https://arxiv.org/pdf/2604.08525)
 
-The paper studies how LLMs behave when a **travel-booking assistant** is softly incentivized to favor **sponsored airlines** (more expensive) over cheaper non-sponsored flights, plus follow-on scenarios (extraneous recommendations, sponsored study tools, harmful financial products).
+The original paper studies how LLMs behave when a
+**travel-booking assistant** is softly incentivized to favor
+**sponsored airlines** (more expensive) over cheaper non-sponsored
+flights, plus follow-on scenarios (extraneous recommendations,
+sponsored study tools, harmful financial products).
+
+### Submission target
+
+The accompanying paper, [paper/main.pdf](paper/main.pdf), is being
+prepared for submission to **TIPS 2026** — the ICPR 2026 Workshop on
+*Textual Information Processing & Synthesis in the Wild*
+(<https://tips2026.midasoc.org>), Lyon, France, 21 August 2026.
+Submission deadline 12 May 2026 (AoE) via CMT3
+(<https://cmt3.research.microsoft.com/TIPS2026>).
 
 ## What was downloaded
 

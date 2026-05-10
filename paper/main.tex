@@ -54,8 +54,8 @@ sponsored recommendation from $64.6\,\%$ to $1.4\,\%$ averaged across
 our ten open-source models, and from $77\,\%$ to $0\,\%$ averaged
 across the two OpenAI models. AI literacy and price-comparison portals are
 likely market-level mitigations; the harmful-product cell is bounded
-by neither. Raw data, both judges' labels and analysis scripts are
-at \url{https://github.com/akmaier/Paper-LLM-Ads}.
+by neither. Raw data, labels and analysis scripts are at
+\url{https://github.com/akmaier/Paper-LLM-Ads}.
 
 \keywords{Large language models \and Reproducibility \and Sponsored
 recommendation \and LLM-as-a-judge \and Prompt engineering.}
@@ -81,8 +81,8 @@ the present paper.
 We were drawn to this study for two reasons. First, it sits at the
 intersection of language-technology evaluation and consumer protection,
 two areas in which the cost of a faulty conclusion is high. Second, it
-exposes a recurring methodological tension in the field. As Maier et
-al.~\cite{Maier19} have argued more broadly, reproducibility in
+exposes a recurring methodological tension in the field. As we have
+argued in earlier work~\cite{Maier19}, reproducibility in
 deep-learning-based research is fragile: small implementation choices
 quietly translate into large measured differences. Subsequent
 field-wide reviews~\cite{Sem25} have only sharpened this picture, with
@@ -91,9 +91,9 @@ the dominant root causes. Reproducing a published rate by reading the
 paper alone is therefore harder than it sounds, and it is harder still
 when each trial is a fresh roll of an LLM's dice.
 
-We follow the agentic-research reproduction protocol of Maier et
-al.~\cite{Maier26}, which compresses what used to be weeks of
-re-implementation into hours. We adopt their three principles -- a
+We follow the agentic-research reproduction protocol of our previous
+work~\cite{Maier26}, which compresses what used to be weeks of
+re-implementation into hours. We adopt its three principles -- a
 locked seed, a fixed trial count per cell, and per-trial reply
 storage with paired judging -- and apply them to the four
 experiments of~\cite{Wu26} on a deliberately enlarged model pool. To
@@ -185,8 +185,9 @@ be the user's preferences, not the operator's; the present paper
 provides one further empirical reason to take that argument seriously.
 
 \paragraph{Reproducibility, AI literacy, and SES bias.}
-Maier et al.~\cite{Maier26} proposed an agentic-research reproduction
-protocol, which we adopt here: each experimental cell is run under a
+In recent prior work~\cite{Maier26} we proposed an agentic-research
+reproduction protocol, which we adopt here: each experimental cell
+is run under a
 fixed seed and a fixed trial count, and every per-trial reply is
 stored side-by-side with its label so that downstream analyses can be
 re-run without further API calls. Semmelrock et al.~\cite{Sem25}
@@ -339,8 +340,8 @@ judge token budget, and the policy for an empty user-facing content
 field are simply not part of the prose description of~\cite{Wu26}; we
 encountered each only by tracing why our first implementation
 disagreed with the published numbers. We see this as direct
-empirical support for the position taken by~\cite{Maier26} and,
-more broadly, by~\cite{Sem25}: a rigorous reproduction protocol
+empirical support for the position we took in~\cite{Maier26} and,
+more broadly, that of~\cite{Sem25}: a rigorous reproduction protocol
 should publish the \emph{operative} implementation, and not just its
 methodological description.
 
