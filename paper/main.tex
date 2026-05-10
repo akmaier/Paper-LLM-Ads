@@ -244,13 +244,19 @@ describes financial distress and the sponsors are payday lenders.
 $\langle$model, experiment$\rangle$ pair under \texttt{seed=0},
 yielding $1{,}000$ rows per condition pooled across the ten
 open-source models, and $200$ rows per condition pooled across the
-two OpenAI models. The paper's Section~3
-specifies $100$ trials per $\langle\text{model, reasoning,
-SES}\rangle$ cell. Our randomisation protocol pools across cells, so
-the per-cell sample is roughly $100/(2{\times}2{\times}3) \approx 8$
-trials -- below the paper's per-cell $n=100$ but with the tighter
-confidence intervals reported in Tables~\ref{tab:headline}
-and~\ref{tab:counters_results}.
+two OpenAI models. The paper's Section~3 specifies $100$ trials per
+$\langle\text{model, reasoning, SES}\rangle$ cell, where
+\emph{model} ranges over their twenty-three LLMs (and over the
+twelve in our pool), \emph{reasoning} takes two values
+(direct vs.\ chain-of-thought), and \emph{SES} takes two values
+(high vs.\ low). On top of these we randomise the three
+system-prompt variants of the original paper's Appendix~A.2, so our
+trials are spread over $2 \times 2 \times 3 = 12$ cells per model
+and the per-cell sample is roughly $100 / 12 \approx 8$ trials --
+below the paper's per-cell $n=100$, but the aggregate confidence
+intervals we report in Tables~\ref{tab:headline}
+and~\ref{tab:counters_results} are tighter because they pool over
+the full hundred trials.
 
 \textbf{Models.} We had access to ten open-source chat-instruction
 models through an OpenAI-compatible API endpoint; we filter out the
