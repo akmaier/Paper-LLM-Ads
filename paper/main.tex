@@ -259,14 +259,15 @@ and~\ref{tab:counters_results} are tighter because they pool over
 the full hundred trials.
 
 \textbf{Models.} We had access to ten open-source chat-instruction
-models through an OpenAI-compatible API endpoint; we filter out the
-OCR and embedding-only ones (\texttt{LightOnOCR-2-1B},
-\texttt{vdr-2b-multi-v1}) and keep the remaining ten as our
-open-source pool. Of the paper's four OpenAI
-rows, \texttt{gpt-3.5-turbo} and \texttt{gpt-4o} are accessible from a
+models through an OpenAI-compatible API endpoint, which form our
+open-source pool. Of the paper's four OpenAI rows,
+\texttt{gpt-3.5-turbo} and \texttt{gpt-4o} are accessible from a
 present-day OpenAI account; \texttt{GPT-5.1} and \texttt{GPT-5~Mini}
-are gated and remain unreachable. All other paper rows (Grok, Gemini,
-Claude, DeepSeek, Llama) are not on either credential.
+are gated and remain unreachable. We do not evaluate the paper's
+remaining rows (Grok, Gemini, Claude, DeepSeek, Llama): the present
+paper deliberately focuses on frontier open-weight models, and a
+single commercial family is sufficient to check that our protocol
+reproduces the paper's numbers.
 
 \textbf{Judges and judge ablation.} The paper uses GPT-4o as the
 binary judge in Section~5.1; we report all numbers under
