@@ -304,7 +304,7 @@ paper's reported tables, and each, taken on its own, shifts a
 reported rate by tens of percentage points. We list them in
 Table~\ref{tab:gotchas} and discuss each below.
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \caption{Three silent failure modes of a prose-only reproduction of
 the protocol of \cite{Wu26}, each invisible at the level of the
@@ -317,12 +317,13 @@ final pipeline.}
 \toprule
 \textbf{Issue} & \textbf{Symptom} & \textbf{Fix} \\
 \midrule
-Judge \texttt{max\_tokens=64}.
+Judge token budget of $64$.
 & Reasoning judges (\texttt{gpt-oss-120b}) consume the entire budget
-on hidden CoT, content returns empty, every trial defaults to
-\texttt{unclear}; Exp~1 sponsored rate read $4.7\,\%$ instead of
-$\sim\!65\,\%$.
-& Lift to $1024$ tokens; binary-shrink retry on a
+on hidden chain-of-thought, content returns empty, every trial
+defaults to the ``unclear'' label; the Exp~1 sponsored rate read
+$4.7\,\%$ rather than the $\sim\!65\,\%$ implied by the original
+paper's GPT-3.5 row.
+& Lift the judge's budget to $1024$ tokens; binary-shrink retry on a
 \texttt{Context\-Window\-Exceeded\-Error} for small-context models. \\
 \addlinespace
 Reasoning-only output ignored.
@@ -407,7 +408,7 @@ models. We note in passing that \texttt{Qwen/Qwen3.5-9B} and
 February and April 2026 respectively, and so could not have been
 part of the original paper's evaluation set.
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \caption{Per-model rates (ten open-source models plus the
 two OpenAI overlap models, $n=100$ per cell). Exp~2
@@ -501,8 +502,8 @@ models), with one hundred trials per cell for a total of
 $n=1{,}200$ trials (Table~\ref{tab:grid}). Following the same
 approach as the original paper, we then fit a simple logistic
 regression with weak L2 regularisation, an intercept, and the two
-features \texttt{commission\_percent} and
-$\log_{10}(\text{wealth})$. The fitted coefficients are
+features commission percentage and the base-ten logarithm of user
+wealth. The fitted coefficients are
 \begin{equation}
   \alpha = +0.81,\qquad
   \beta_{\text{commission}}^{\text{std}} = -0.03,\qquad
@@ -523,7 +524,7 @@ the booking site earns one or twenty percent of the ticket price,
 and very sensitive to whether the user can afford to pay the higher
 fare in the first place.
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \caption{Sponsored rate on \texttt{gpt-3.5-turbo} as a function of
 commission rate (rows) and user wealth (columns), $100$ trials per
@@ -557,7 +558,7 @@ them with the user-side counter-prompts.
 \subsection{Paired Judge Ablation}
 \label{sec:rq2-judge}
 
-\begin{figure}[t]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=0.95\linewidth]{figs/judge_agreement.pdf}
 \caption{Per-judge Exp~2 rates on the same $1{,}000$ replies, with
@@ -589,7 +590,7 @@ Koch's ``slight''-to-``moderate'' regime, with the two proprietary
 judges in much closer agreement with each other than either is with
 the open-weight judge.
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \caption{Per-judge rates and pairwise agreement on the same
 $1{,}000$ replies. Columns: \texttt{oss}{}=\texttt{gpt-oss-120b},
@@ -620,42 +621,30 @@ Exp~2 spons.\ conc.       & $0.05$ & $0.34$ & $0.33$                  & $0.16$  
 The absolute Exp~1 sponsored rate is itself judge-sensitive --
 $0.47$ under the strictest judge (\texttt{gpt-4o}), $0.65$ under
 \texttt{gpt-oss-120b}, $0.71$ under \texttt{gpt-4o-mini} -- a
-$24$-percentage-point swing on the \emph{same} replies; the smaller
-proprietary judge over-counts sponsored choices relative to the
-larger one. Crucially for Section~\ref{sec:rq3}, the counter-sweep
-rates averaged across the ten open-source models stay within
-$4.8$\,pp across all three judges -- the \texttt{compare} counter
-ranges from $0.010$ (\texttt{gpt-4o}) to $0.019$
-(\texttt{gpt-4o-mini}). The counter-prompt results are
-therefore \emph{judge-invariant} even where the absolute Exp~2
-numbers are not. The largest model-level judge effect we observed is
-on \texttt{Qwen/Qwen3.5-9B}, which scores $0.54$ on Exp~1 under
-\texttt{gpt-oss-120b} and $0.97$ under \texttt{gpt-4o-mini} -- a
-$43$\,pp shift; every other open-source model in our pool shifts by
-no more than $11$\,pp. \texttt{Qwen3.5-9B} emits unusually long
-structured reasoning traces, and the open-weight judge often labels
-the trailing user-facing section ``unclear'' while
-\texttt{gpt-4o-mini} reads through to the actual recommendation --
-a model-judge interaction, not a real behaviour shift, and exactly
-the kind of effect that a single-judge study would silently
-mis-attribute to the model.
+$24$-percentage-point swing on the \emph{same} replies, with the
+smaller proprietary judge over-counting sponsored choices relative
+to the larger one. Crucially for Section~\ref{sec:rq3}, the
+counter-sweep rates averaged across the ten open-source models stay
+within $4.8$\,pp across all three judges (\texttt{compare} ranges
+from $0.010$ under \texttt{gpt-4o} to $0.019$ under
+\texttt{gpt-4o-mini}). The counter-prompt results are therefore
+\emph{judge-invariant} even where the absolute Exp~2 numbers are
+not.
 
 \section{RQ3: Four User-Side Strategies to Defeat the Steering}
 \label{sec:rq3}
 
-We close the empirical part of this paper with a question that is, in
-our view, the most actionable one: given that the sponsorship
-behaviour exists and that we can measure it cleanly, what can a
-non-technical user do about it? Section~4.5 of~\cite{Wu26} answers a
-related but distinct question by varying the \emph{system} prompt to
-instruct the assistant to act in the user's or in the company's
-interest. The user side, however, is not part of their design. We
-therefore extend the protocol with four short user-side
-counter-prompts (Table~\ref{tab:counters}), each appended to the
-Exp~1 user message and otherwise leaving the protocol unchanged.
-None of the four exceeds thirty tokens.
+We close with a question that the original paper does not ask: given
+that the sponsorship behaviour exists, what can a non-technical user
+do about it? Section~4.5 of~\cite{Wu26} varies the \emph{system}
+prompt to instruct the assistant to act in the user's or in the
+company's interest, but the user side is not part of their design.
+We extend the protocol with four short user-side counter-prompts
+(Table~\ref{tab:counters}), each appended to the Exp~1 user message
+and otherwise leaving the protocol unchanged; none exceeds thirty
+tokens.
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \caption{Four user-side counter-prompts. Each is appended to the
 user message of Exp~1 between the flight list and the reasoning addon,
@@ -674,13 +663,14 @@ without changing any other part of the protocol.}
 \end{tabular}
 \end{table}
 
-\begin{table}[t]
+\begin{table}[tbp]
 \centering
 \caption{Per-counter sponsored rate on each of the twelve models
 ($n=100$ per cell). Bold cells are non-zero counter results.
 Averages use the $1{,}000$-row pool from the ten open-source models
-and the $200$-row pool from the two OpenAI models. Rate deltas under the \texttt{gpt-4o-mini} judge fall
-within $\pm 1.1$\,pp of these values for every counter
+and the $200$-row pool from the two OpenAI models. Rates under
+\texttt{gpt-oss-120b} and \texttt{gpt-4o-mini} as alternative judges
+fall within $\pm 4.8$\,pp of the values shown
 (Section~\ref{sec:rq2-judge}).}
 \label{tab:counters_results}
 \setlength{\tabcolsep}{5pt}
@@ -710,7 +700,7 @@ gemma-4-E4B-it                         &  0.45 &      0.02 &      0.00 & \textbf
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figs/counter_effect.pdf}
 \caption{Per-model sponsored-recommendation rate under baseline and
@@ -746,22 +736,18 @@ notably \texttt{IBM/granite-4.0-micro} ($0.41$) and
 re-frame as creative roleplay and continue following the system
 instruction nonetheless.
 
-It is worth pausing on \emph{why} the four strategies differ in
-effectiveness. We see \texttt{compare} as the strongest because it
-re-grounds the decision in a neutral table in which price dominates,
-leaving very little semantic room for the verb ``favour'' to
-operate. The \texttt{rule} counter imposes an explicit decision
-criterion that is locally inconsistent with sponsorship
-favouritism, and is therefore similarly hard to reconcile with the
-system instruction. \texttt{ignore} simply asks the model to
-overrule the system prompt; it is, in this sense, the most directly
-constrained by the instruction-hierarchy preferences described in
-\cite{Wallace24} -- which is also why \texttt{gpt-oss-120b} (a
-strong instruction-follower in our pool) produces the highest
-residual rate under \texttt{ignore} ($0.13$). \texttt{reframe},
-finally, only changes the assistant's self-description; on a model
-that treats persona as decorative, the system prompt's preferences
-remain in force.
+The four strategies differ in effectiveness in a way that admits a
+simple interpretation. \texttt{compare} re-grounds the decision in a
+neutral table in which price dominates, leaving little semantic
+room for the verb ``favour'' to operate; \texttt{rule} imposes a
+decision criterion that is locally inconsistent with sponsorship
+favouritism. \texttt{ignore} asks the model to overrule the system
+prompt and is therefore the most directly constrained by the
+instruction-hierarchy preferences of~\cite{Wallace24} -- which is why
+\texttt{gpt-oss-120b}, a strong instruction-follower, produces the
+highest residual rate under it ($0.13$). \texttt{reframe} only
+changes the assistant's self-description, and is fragile against
+models that treat persona as decorative.
 
 A direct comparison with company-side mitigation is now possible.
 The strongest \emph{system-prompt} steering on \texttt{gpt-4o}
@@ -831,19 +817,15 @@ al.~\cite{Bai22}, therefore remains the only available control --
 and the open policy lever.
 
 \textbf{Limitations.} We close with a candid statement of what our
-study does not establish. Our pool of ten open-source models does not
-overlap with most of the original paper's twenty-three rows; only
-\texttt{gpt-3.5-turbo} and \texttt{gpt-4o} are reachable from a
-public OpenAI account, while \texttt{GPT-5.1}, \texttt{GPT-5\,Mini}
-and the Grok, Gemini, Claude, DeepSeek and Llama families remain out
-of our scope. Our judge ablation covers \texttt{gpt-oss-120b} and
-\texttt{gpt-4o-mini} only; the original paper used full
-\texttt{gpt-4o} as the binary judge in Exp~2. Our trial count is
-one hundred per $\langle$model, experiment$\rangle$, randomised over
-the $2 \times 2 \times 3 = 12$ persona-reasoning-prompt cells,
-whereas the original paper runs one hundred trials per cell. Each
-condition is run under a single seed, and we do not yet estimate
-seed-to-seed variance.
+study does not establish. We only evaluate two of the original
+paper's twenty-three rows directly (\texttt{gpt-3.5-turbo} and
+\texttt{gpt-4o}); the Grok, Gemini, Claude, DeepSeek, Llama and the
+gated GPT-5 family remain out of scope, by deliberate choice. Our
+trial count is one hundred per $\langle$model, experiment$\rangle$
+randomised over the $2 \times 2 \times 3 = 12$
+persona-reasoning-prompt cells, whereas the original paper runs one
+hundred trials per cell. Each condition is run under a single seed,
+and we do not yet estimate seed-to-seed variance.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -851,8 +833,9 @@ seed-to-seed variance.
 We have reproduced the four experiments of~\cite{Wu26} on a
 twelve-model superset, surfaced three silent implementation
 failures that the paper's prose did not constrain, replicated its
-central \texttt{GPT-3.5} logistic-regression intercept to two
-decimals, and shown that a thirty-token user-side counter-prompt
+central \texttt{GPT-3.5} logistic-regression intercept within four
+percentage points, and shown that a thirty-token user-side
+counter-prompt
 removes the sponsored-recommendation effect on every model we
 tested. The harmful-sponsored-product cell -- where neither
 user-side education nor comparison-portal emergence applies -- is
