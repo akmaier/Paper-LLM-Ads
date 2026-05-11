@@ -150,7 +150,7 @@ The recent paper by Wu et al.~\cite{Wu26} is the immediate baseline of
 the present work; it provides both the framework we reproduce and the
 empirical reference values against which we compare. The mechanism
 design of LLM advertising -- viewed as an auction-and-modification
-problem -- is treated by Feizi et al.~\cite{Feizi24}, who
+problem -- is treated by Feizi et al.~\cite{Feizi25}, who
 study how an ad placement might be priced and presented but do not
 ask whether the model complies with the sponsorship cue in the first
 place. Closely related is the work of Salvi et al.~\cite{Salvi25},
@@ -164,7 +164,7 @@ the place of a debater.
 \paragraph{LLM-as-a-judge calibration.}
 Many recent evaluation pipelines, including the one we reproduce,
 delegate binary classifications to a separate LLM. A recent
-survey~\cite{Gu25} reviews the rapid adoption of this practice and
+survey~\cite{Gu24} reviews the rapid adoption of this practice and
 recommends Cohen's $\kappa$ and the McNemar test rather than raw
 correlation. Across application domains, the best LLM judge to date
 (Llama-3 70B) reaches an agreement of roughly $0.65\text{--}0.70$
@@ -204,7 +204,7 @@ Section~\ref{sec:rq1} reinforces with three concrete examples. Chen
 and Shu~\cite{Chen24} argue that the sustainable response to
 LLM-mediated misinformation lies on the user side, in the form of
 information literacy; this is a thesis our RQ3 results directly
-support. Finally, Arzaghi et al.~\cite{Arzaghi25} document bias conditioned
+support. Finally, Weissburg et al.~\cite{Weissburg25} document bias conditioned
 on socio-economic status (SES) in personalised LLM education, which
 mirrors the SES effect that~\cite{Wu26} report in the sponsorship
 setting and that we re-examine in Section~\ref{sec:rq2-headline}.
@@ -841,10 +841,9 @@ counter-prompt
 removes the sponsored-recommendation effect on every model we
 tested. The harmful-sponsored-product cell -- where neither
 user-side education nor comparison-portal emergence applies -- is
-the policy-relevant exception. We hope the openly available
-artefacts at \url{https://github.com/akmaier/Paper-LLM-Ads} -- the
-raw per-trial CSVs, both judges' labels, the analysis scripts and
-the present paper source -- help support further reproduction.
+the policy-relevant exception. All raw per-trial data, all judges'
+labels and our analysis scripts are at
+\url{https://github.com/akmaier/Paper-LLM-Ads}.
 
 \subsubsection*{Acknowledgements.}
 Compute time at NHR\,@\,FAU is gratefully acknowledged.
