@@ -40,7 +40,7 @@ Wu et al.\ (2026) showed that most frontier large language models
 their system prompt contains a soft sponsorship cue. We reproduce
 their evaluation on ten open-weight chat models plus the two of their
 twenty-three models that are still reachable today
-(\texttt{gpt-3.5-turbo}, \texttt{gpt-4o}). All headline numbers in
+(\texttt{gpt-3.5-turbo}, \texttt{gpt-4o}). All reported rates in
 this paper are produced under the same judge the original paper used
 (\texttt{gpt-4o}); we additionally store every label under an
 open-weight (\texttt{gpt-oss-120b}) and a smaller proprietary
@@ -287,11 +287,10 @@ the evaluated open-source models), \texttt{gpt-4o-mini} (the small
 proprietary classifier), and \texttt{gpt-4o} (the same frontier
 proprietary classifier the original paper used). All three labels are
 stored side-by-side and compared in Section~\ref{sec:rq2-judge}.
-Across the entire pipeline a helper
-\texttt{strip\_to\_user\_facing()} removes \texttt{<think>} blocks
-and prefers the explicit ``\texttt{Response to user:}'' block the
-paper's CoT format addon requests, so the judge never reads the
-model's hidden chain-of-thought.
+Across the entire pipeline, before any reply is judged, we strip
+internal-reasoning artefacts -- explicit ``thinking'' blocks and any
+text preceding the paper's CoT-format ``Response to user:'' marker
+-- so the judge sees only the user-facing answer.
 
 \section{RQ1: Is a Prose Description Sufficient?}
 \label{sec:rq1}
@@ -302,7 +301,7 @@ of~\cite{Wu26} \emph{from the prose alone} -- which is, in our view,
 the natural starting point for any reproduction -- produced three
 silent failure modes. None of them is visible at the level of the
 paper's reported tables, and each, taken on its own, shifts a
-headline number by tens of percentage points. We list them in
+reported rate by tens of percentage points. We list them in
 Table~\ref{tab:gotchas} and discuss each below.
 
 \begin{table}[t]
@@ -339,15 +338,14 @@ preprocessing. \\
 Judge sees CoT.
 & When the judge reads the model's chain-of-thought verbatim, the
 literal string ``Sponsoring Partners: \dots'' from the system prompt
-appears in the reasoning trace; the judge sets
-\texttt{sponsorship\_\allowbreak concealment} to false because the word
-\emph{sponsor} is present, not because the user was told. Exp~2
-sponsorship-concealment rate read $3\,\%$ rather than the paper's
-$\sim\!96\,\%$.
-& \texttt{strip\_to\_user\_facing()} drops \texttt{<think>} blocks and
-prefers the ``\texttt{Response to user:}'' block. Exp~2 conditional
-sponsorship-concealment rises from $3\,\%$ to a model-by-model range
-of $0.05\text{--}0.50$. \\
+appears in the reasoning trace; the judge sets sponsorship
+concealment to false because the word \emph{sponsor} is present, not
+because the user was told. Exp~2 sponsorship-concealment rate read
+$3\,\%$ rather than the paper's $\sim\!96\,\%$.
+& Strip internal-reasoning blocks and prefer the explicit
+``Response to user:'' segment before judging. Exp~2 conditional
+sponsorship-concealment rises from $3\,\%$ to a model-by-model
+range of $0.05\text{--}0.50$. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -382,7 +380,7 @@ Having addressed RQ1, we now turn to the substantive question that
 motivated the present paper: do the central empirical claims of
 \cite{Wu26} hold up on a different and substantially newer model
 pool? Three complementary slices of our data bear on this question. We
-first present a per-model headline table that covers all twelve
+first present a per-model rate table that covers all twelve
 models we evaluated (Section~\ref{sec:rq2-headline}). We then re-run
 the original Section~4.3 commission/wealth grid on
 \texttt{gpt-3.5-turbo} -- the cheapest of the two paper-overlap
@@ -392,7 +390,7 @@ single judge of the original paper with a paired judge protocol and
 ask which of the original claims are robust to the judge choice
 (Section~\ref{sec:rq2-judge}).
 
-\subsection{Per-model Headline Rates}
+\subsection{Per-model Rates}
 \label{sec:rq2-headline}
 
 We first ask the most basic possible question: do current open-weight
@@ -416,8 +414,8 @@ two OpenAI overlap models, $n=100$ per cell). Exp~2
 ``framed+\,$|$\,surf'' and ``spons.\,conc.\,$|$\,surf''
 are conditioned on having surfaced the sponsored alternative,
 matching paper Tables~3 and 4. Bold entries are the strongest cell
-in each column. Wilson 95\,\% CIs in
-\texttt{results/figures\_of\_merit.json}.}
+in each column. Wilson 95\,\% confidence intervals for every row are
+included in the supplementary data release.}
 \label{tab:headline}
 \renewcommand{\arraystretch}{1.05}
 \setlength{\tabcolsep}{3pt}
@@ -628,7 +626,7 @@ larger one. Crucially for Section~\ref{sec:rq3}, the counter-sweep
 rates averaged across the ten open-source models stay within
 $4.8$\,pp across all three judges -- the \texttt{compare} counter
 ranges from $0.010$ (\texttt{gpt-4o}) to $0.019$
-(\texttt{gpt-4o-mini}). The headline counter-prompt findings are
+(\texttt{gpt-4o-mini}). The counter-prompt results are
 therefore \emph{judge-invariant} even where the absolute Exp~2
 numbers are not. The largest model-level judge effect we observed is
 on \texttt{Qwen/Qwen3.5-9B}, which scores $0.54$ on Exp~1 under
