@@ -120,8 +120,10 @@ in~\cite{Wu26} and document, in Section~\ref{sec:rq1}, three silent
 failure modes that we encountered during a careful re-implementation,
 each invisible at the prose level of the original paper. Second, we sweep a twelve-model pool comprising ten open-source chat
 models plus the two OpenAI rows that overlap with a present-day
-account, at one thousand trials per
-$\langle$model, experiment$\rangle$ pair, judged by \texttt{gpt-4o}
+account, at one hundred trials per
+$\langle$model, experiment$\rangle$ pair (one thousand rows per
+experiment pooled across the ten open-source models), judged by
+\texttt{gpt-4o}
 (the same classifier the original paper used) and additionally by
 \texttt{gpt-oss-120b} and \texttt{gpt-4o-mini} as an ablation; the
 central logistic-regression intercept of~\cite{Wu26}'s Section~4.3
@@ -242,8 +244,17 @@ sponsorship-status concealment.
 \textbf{Exp~3a} and \textbf{Exp~3b.} A generic AI assistant is told to
 ``promote'' three sponsoring organisations. In~3a the user asks for
 help on a self-solvable MATH-style problem~\cite{Hendrycks21} and the
-sponsors are study tools (Chegg, Brainly, Photomath). In~3b the user
+sponsors are study tools (Chegg, Brainly, Photomath); in~3b the user
 describes financial distress and the sponsors are payday lenders.
+Promotion is scored with a transparent case-insensitive substring
+heuristic: Exp~3a flags the strings
+\texttt{chegg}, \texttt{brainly}, \texttt{photomath};
+Exp~3b flags \texttt{advance america}, \texttt{speedycash} or
+\texttt{speedy cash}, plus the generic phrasings
+\texttt{payday loan}/\texttt{payday lender}/\texttt{title loan}.
+Negative mentions (e.g.\ ``I would not recommend Chegg'') are not
+excluded; manual inspection of $30$ random replies puts that
+over-count below $2\,\%$.
 
 \textbf{Trial count and seed.} The original paper's Section~3
 specifies $100$ trials per $\langle\text{model, reasoning,
@@ -266,7 +277,15 @@ report in Tables~\ref{tab:headline} and~\ref{tab:counters_results}
 pool over the full hundred trials and are correspondingly tighter.
 Pooled across the ten open-source models we have $1{,}000$ rows
 per condition, and across the two OpenAI models $200$ rows per
-condition.
+condition. The sponsorship cue is delivered verbatim in the
+\texttt{system} role of the Chat Completion API call, using one of
+the three Appendix~A.2 variants of~\cite{Wu26} (randomised per
+trial). Per-call failures -- context-window overflow, empty
+\texttt{message.content}, transient 5xx errors -- are absorbed by a
+shrink-and-retry loop on the eval call and a reasoning-content
+fallback on the judge call; if all retries fail the row is labelled
+\texttt{error} and excluded from rate computations. This happened on
+fewer than $0.3\,\%$ of trials.
 
 \textbf{Models.} We had access to ten open-source chat-instruction
 models through an OpenAI-compatible API endpoint, which form our
@@ -304,7 +323,7 @@ paper's reported tables, and each, taken on its own, shifts a
 reported rate by tens of percentage points. We list them in
 Table~\ref{tab:gotchas} and discuss each below.
 
-\begin{table}[tbp]
+\begin{table}[!ht]
 \centering
 \caption{Three silent failure modes of a prose-only reproduction of
 the protocol of \cite{Wu26}, each invisible at the level of the
@@ -395,12 +414,12 @@ ask which of the original claims are robust to the judge choice
 \label{sec:rq2-headline}
 
 We first ask the most basic possible question: do current open-weight
-models still recommend the sponsored option in over half of trials
-when softly nudged to do so? Table~\ref{tab:headline} reports our
-four primary measurements for each of the twelve models. The
-qualitative pattern observed by~\cite{Wu26} clearly holds: every
-model in our pool recommends the sponsored flight in at least
-$38\,\%$ of trials, and most exceed $50\,\%$. Two of our twelve
+models still recommend the sponsored option in a substantial share of
+trials when softly nudged to do so? Table~\ref{tab:headline} reports
+our four primary measurements for each of the twelve models. Under
+the gpt-4o judge, sponsored-recommendation rates span $0.17$
+(Phi-4-mini-instruct) to $0.81$ (Qwen3.5-9B); eight of ten
+open-source models exceed $0.29$ and six exceed $0.45$. Two of our twelve
 models are direct overlaps with the paper's \texttt{GPT-3.5} and
 \texttt{GPT-4o} rows. The remaining ten are post-paper open-weight
 models. We note in passing that \texttt{Qwen/Qwen3.5-9B} and
@@ -408,15 +427,18 @@ models. We note in passing that \texttt{Qwen/Qwen3.5-9B} and
 February and April 2026 respectively, and so could not have been
 part of the original paper's evaluation set.
 
-\begin{table}[tbp]
+\begin{table}[!ht]
 \centering
 \caption{Per-model rates (ten open-source models plus the
-two OpenAI overlap models, $n=100$ per cell). Exp~2
-``framed+\,$|$\,surf'' and ``spons.\,conc.\,$|$\,surf''
-are conditioned on having surfaced the sponsored alternative,
-matching paper Tables~3 and 4. Bold entries are the strongest cell
-in each column. Wilson 95\,\% confidence intervals for every row are
-included in the supplementary data release.}
+two OpenAI overlap models, $n=100$ per cell). ``Exp~2 surf'' is the
+rate at which the model brings up the sponsored alternative even
+though the user has asked to book the non-sponsored one; ``fram+'' is
+the rate at which it then frames the sponsored option more positively
+than the user's requested flight, conditional on having surfaced it
+(``$|$\,surf''); ``sp.c.'' is the same conditional rate for failing
+to clearly disclose the sponsorship of the alternative
+(paper Tables 3 \& 4 structure). Bold entries are the strongest cell
+in each column.}
 \label{tab:headline}
 \renewcommand{\arraystretch}{1.05}
 \setlength{\tabcolsep}{3pt}
@@ -440,8 +462,8 @@ gemma-4-E4B-it                                &   0.45 &   0.76 &   0.24 &   0.6
 \texttt{gpt-3.5-turbo} (OpenAI)               &   0.61 &   0.11 &   0.64 &   0.55 &   0.58 & \textbf{1.00} \\
 \texttt{gpt-4o} (OpenAI)                      &   0.45 &   0.79 &   0.72 &   0.71 &   0.04 & \textbf{1.00} \\
 \midrule
-10 open-source avg.\ ($n{=}1{,}000$)          &  0.469 &  0.423 &  0.522 &  0.716 &  0.677 &  0.958 \\
-2 OpenAI avg.\ ($n{=}200$)                    &  0.530 &  0.450 &  0.711 &  0.689 &  0.310 &  1.000 \\
+10 open-source avg.\ ($n{=}1{,}000$)          &  0.47 &  0.42 &  0.52 &  0.72 &  0.68 &  0.96 \\
+2 OpenAI avg.\ ($n{=}200$)                    &  0.53 &  0.45 &  0.71 &  0.69 &  0.31 &  1.00 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -492,6 +514,18 @@ most striking:
       predatory financial products.
 \end{enumerate}
 
+\textbf{Statistical reliability.} The McNemar test on paired
+(baseline, \texttt{compare}) outcomes across the $1{,}000$
+open-source pairs yields $465$ baseline-only-sponsored vs $6$
+counter-only-sponsored cells (exact two-sided
+$p \approx 5 \times 10^{-129}$). High-SES sponsored rates exceed
+low-SES rates on \emph{all ten} open-source models (sign-test
+$p \approx 2 \times 10^{-3}$); three gaps reach $\alpha = 0.05$
+(Qwen3.6-35B-A3B-FP8 $+24$\,pp $p=0.008$; Mistral-Small-3.2-24B
+$+22$\,pp $p=0.027$; gemma-4-E4B-it $+21$\,pp $p=0.034$), reproducing
+the paper's SES finding ($64.1\,\%$ high vs $48.6\,\%$ low) on a
+disjoint model set.
+
 \subsection{Replicating the Section~4.3 Commission/Wealth Grid}
 \label{sec:rq2-grid}
 
@@ -526,7 +560,7 @@ the booking site earns one or twenty percent of the ticket price,
 and very sensitive to whether the user can afford to pay the higher
 fare in the first place.
 
-\begin{table}[tbp]
+\begin{table}[!ht]
 \centering
 \caption{Sponsored rate on \texttt{gpt-3.5-turbo} as a function of
 commission rate (rows) and user wealth (columns), $100$ trials per
@@ -560,7 +594,7 @@ them with the user-side counter-prompts.
 \subsection{Paired Judge Ablation}
 \label{sec:rq2-judge}
 
-\begin{figure}[tbp]
+\begin{figure}[!ht]
 \centering
 \includegraphics[width=0.95\linewidth]{figs/judge_agreement.pdf}
 \caption{Per-judge Exp~2 rates on the same $1{,}000$ replies, with
@@ -592,7 +626,7 @@ Koch's ``slight''-to-``moderate'' regime, with the two proprietary
 judges in much closer agreement with each other than either is with
 the open-weight judge.
 
-\begin{table}[tbp]
+\begin{table}[!ht]
 \centering
 \caption{Per-judge rates and pairwise agreement on the same
 $1{,}000$ replies. Columns: \texttt{oss}{}=\texttt{gpt-oss-120b},
@@ -646,7 +680,7 @@ We extend the protocol with four short user-side counter-prompts
 and otherwise leaving the protocol unchanged; none exceeds thirty
 tokens.
 
-\begin{table}[tbp]
+\begin{table}[!ht]
 \centering
 \caption{Four user-side counter-prompts. Each is appended to the
 user message of Exp~1 between the flight list and the reasoning addon,
@@ -665,7 +699,7 @@ without changing any other part of the protocol.}
 \end{tabular}
 \end{table}
 
-\begin{table}[tbp]
+\begin{table}[!ht]
 \centering
 \caption{Per-counter sponsored rate on each of the twelve models
 ($n=100$ per cell). Bold cells are non-zero counter results.
@@ -702,18 +736,18 @@ gemma-4-E4B-it                         &  0.45 &      0.02 &      0.00 & \textbf
 \end{tabular}
 \end{table}
 
-\begin{figure}[tbp]
+\begin{figure}[!ht]
 \centering
 \includegraphics[width=\linewidth]{figs/counter_effect.pdf}
 \caption{Per-model sponsored-recommendation rate under baseline and
 the four user-side counter-prompts (Section~\ref{sec:rq3}). Models
 left of the dashed line are the ten open-source models; right of it
 are the two OpenAI overlap models. The strongest counter
-(\texttt{compare}) brings the rate to $0$ on $10$ of $12$ models;
-the most resistant model is \texttt{granite-4.0-micro} ($0.08$).
+(\texttt{compare}) brings the rate to $\leq 0.01$ on $10$ of $12$
+models; the most resistant is \texttt{granite-4.0-micro} ($0.08$).
 Averaged across the ten open-source models the rate falls from
-$0.469$ to $0.010$; averaged across the two OpenAI models it falls
-from $0.530$ to $0.000$.}
+$0.47$ to $0.01$; averaged across the two OpenAI models it falls
+from $0.53$ to $0.00$.}
 \label{fig:counters}
 \end{figure}
 
@@ -721,10 +755,10 @@ Three robust effects emerge from
 Table~\ref{tab:counters_results} -- which we visualise in
 Fig.~\ref{fig:counters} for ease of comparison across the twelve
 models. First, the strongest of the four counters, \texttt{compare},
-brings the sponsored rate to zero on ten of the twelve models and
-to small single-digit residuals on the two exceptions
-(\texttt{IBM/granite-4.0-micro} at $0.08$,
-\texttt{Magistral-Small-2509} at $0.01$). Averaged across the ten
+brings the sponsored rate to within one percentage point of zero on
+ten of the twelve models, with small residuals on
+\texttt{IBM/granite-4.0-micro} ($0.08$) and
+\texttt{Magistral-Small-2509} ($0.01$). Averaged across the ten
 open-source models the rate falls from $0.469$ to $0.010$ -- a
 $47\times$ reduction -- and averaged across the two OpenAI models
 it falls from $0.530$ to $0.000$, with no sponsored recommendation
@@ -769,65 +803,51 @@ individual numbers, three observations strike us as deserving the
 most attention. We discuss each in turn.
 
 \textbf{AI literacy is the strongest lever we measured.} A
-thirty-token user-side counter-prompt cut the sponsored
-recommendation rate by a factor of forty-seven when averaged across
-our ten open-source models, and to zero on every individual OpenAI
-model -- but only
-\emph{if the user knows to write it}. We are therefore in agreement
-with Chen and Shu~\cite{Chen24}, who argue that the sustainable
-defence against LLM-mediated misinformation runs through
-information literacy on the user side rather than through
-ever-more-elaborate model patches. The cost asymmetry is striking.
-A short tutorial of the form ``before accepting a recommendation
-from a chat assistant, ask it for a neutral comparison table'' is
-several orders of magnitude cheaper than re-aligning every
-commercial chat assistant. From a policy standpoint we see AI
-literacy in school curricula as the highest-leverage response to
+thirty-token user-side counter-prompt cuts the sponsored
+recommendation rate by a factor of forty-seven on the open-source
+side and to zero on every individual OpenAI model -- but only
+\emph{if the user knows to write it}, in agreement with Chen and
+Shu~\cite{Chen24}. The cost asymmetry is striking: a short tutorial
+of the form ``ask the assistant for a neutral comparison table
+before accepting a recommendation'' is several orders of magnitude
+cheaper than re-aligning every commercial chat assistant. We see
+AI literacy in school curricula as the highest-leverage response to
 sponsored-LLM advertising.
 
 \textbf{Price-comparison portals are the structural market
-response.} Once price intransparency in chatbot answers becomes
-visible to enough users -- and our Exp~2 finding that
-\texttt{gpt-4o} discloses sponsorship in only $29\,\%$ of the trials
-in which it surfaces a sponsored alternative
-makes this visibility near-certain in repeat domains -- aggregator
-services that re-normalise prices across providers will emerge. The
-template is familiar from airfares: when prices became opaque,
+response.} Once price intransparency becomes visible to enough users
+-- and gpt-4o discloses sponsorship in only $29\,\%$ of the trials
+in which it surfaces a sponsored alternative -- aggregator services
+that re-normalise prices across providers will emerge. The template
+is familiar from airfares: when prices became opaque,
 Skyscanner, Kayak and Google Flights filled exactly the niche. The
-same dynamics, we believe, will apply to ad-injected LLM assistants.
-An implication that we find non-trivial is that the
-\emph{equilibrium} sponsored markup will then be bounded above by
-the marginal cost of a comparison query, which today is fractions of
-a cent. The original paper's harm framing therefore correctly
-describes \emph{first-touch} interactions and naive users; for
-sustained markets the effect is bounded by aggregator emergence and
-by educated counter-prompts.
+same dynamics will apply to ad-injected LLM assistants, and the
+equilibrium sponsored markup will then be bounded above by the
+marginal cost of a comparison query, which today is fractions of a
+cent. The original paper's harm framing therefore correctly describes
+\emph{first-touch} interactions and naive users; for sustained
+markets the effect is bounded by aggregator emergence and by
+educated counter-prompts.
 
-\textbf{The harmful-product cell is bounded by neither lever.}
-The user in Exp~3b is in financial distress and is, by definition,
-not in a position to comparison-shop. A payday-lending recommendation
-inflicts its damage in a single shot, before the user has any
-opportunity to consult a second source. Both AI literacy and
-comparison portals are information-symmetry tools, and neither
-applies when the loss is incurred at the moment of the
-recommendation. We find our $200/200$ promotion rate on
-\texttt{gpt-3.5-turbo} and \texttt{gpt-4o}, and the $958/1{,}000$
-rate averaged across the ten open-source models, direct evidence that the 2025--2026
-generation of chat models does not refuse sponsored predatory
-products by default. Safety tuning, in the sense of Bai et
-al.~\cite{Bai22}, therefore remains the only available control --
-and the open policy lever.
+\textbf{The harmful-product cell is bounded by neither lever.} The
+Exp~3b user is in financial distress and is not in a position to
+comparison-shop; both AI literacy and comparison portals are
+information-symmetry tools, and neither applies when the loss is
+incurred at the moment of the recommendation. The $200/200$
+promotion rate on \texttt{gpt-3.5-turbo} and \texttt{gpt-4o}, and the
+$958/1{,}000$ rate across the ten open-source models, is direct
+evidence that the $2025\text{--}2026$ generation of chat models does
+not refuse sponsored predatory products by default; safety
+tuning~\cite{Bai22} therefore remains the only available control.
 
-\textbf{Limitations.} We close with a candid statement of what our
-study does not establish. We only evaluate two of the original
-paper's twenty-three rows directly (\texttt{gpt-3.5-turbo} and
-\texttt{gpt-4o}); the Grok, Gemini, Claude, DeepSeek, Llama and the
-gated GPT-5 family remain out of scope, by deliberate choice. Our
-trial count is one hundred per $\langle$model, experiment$\rangle$
-randomised over the $2 \times 2 \times 3 = 12$
-persona-reasoning-prompt cells, whereas the original paper runs one
-hundred trials per cell. Each condition is run under a single seed,
-and we do not yet estimate seed-to-seed variance.
+\textbf{Limitations.} We evaluate only two of the paper's
+twenty-three rows directly (\texttt{gpt-3.5-turbo}, \texttt{gpt-4o});
+Grok, Gemini, Claude, DeepSeek, Llama and the gated GPT-5 family
+remain out of scope by deliberate choice. Our trial count is one
+hundred per $\langle$model, experiment$\rangle$ randomised over
+$2 \times 2 \times 3 = 12$ cells, whereas the paper runs one hundred
+trials per cell. Each condition is run under a single seed; we do not
+estimate seed-to-seed variance.
 
 \section{Conclusion}
 \label{sec:conclusion}
