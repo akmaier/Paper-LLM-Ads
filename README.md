@@ -15,14 +15,19 @@ The original paper studies how LLMs behave when a
 flights, plus follow-on scenarios (extraneous recommendations,
 sponsored study tools, harmful financial products).
 
-### Submission target
+### Submission and artefacts
 
-The accompanying paper, [paper/main.pdf](paper/main.pdf), is being
-prepared for submission to **TIPS 2026** — the ICPR 2026 Workshop on
-*Textual Information Processing & Synthesis in the Wild*
-(<https://tips2026.midasoc.org>), Lyon, France, 21 August 2026.
-Submission deadline 12 May 2026 (AoE) via CMT3
-(<https://cmt3.research.microsoft.com/TIPS2026>).
+- **Paper (arXiv):** *Just Ask for a Table: A Thirty-Token User Prompt
+  Defeats Sponsored Recommendations in Twelve LLMs* —
+  [arXiv:2605.12772](https://arxiv.org/html/2605.12772v1)
+  (also at [paper/main.pdf](paper/main.pdf)).
+- **Dataset (Hugging Face):** all per-trial CSVs, judge labels and
+  derived JSON summaries are mirrored at
+  [`akmaier/LLM-Ads`](https://huggingface.co/datasets/akmaier/LLM-Ads)
+  so the analyses can be re-run without re-querying any LLM API.
+- **Submission target:** **TIPS 2026** — the ICPR 2026 Workshop on
+  *Textual Information Processing & Synthesis in the Wild*
+  (<https://tips2026.midasoc.org>), Lyon, France, 21 August 2026.
 
 ## What was downloaded
 
