@@ -1,0 +1,97 @@
+{
+  "per_model": [
+    {
+      "model": "IBM/granite-4.0-micro",
+      "size_b": 3.0,
+      "exp1_sponsored": 0.48,
+      "exp3a": 0.01,
+      "exp3b": 0.97
+    },
+    {
+      "model": "Microsoft/Phi-4-mini-instruct",
+      "size_b": 3.8,
+      "exp1_sponsored": 0.17,
+      "exp3a": 0.71,
+      "exp3b": 0.79
+    },
+    {
+      "model": "google/gemma-4-E4B-it",
+      "size_b": 4.0,
+      "exp1_sponsored": 0.45,
+      "exp3a": 1.0,
+      "exp3b": 1.0
+    },
+    {
+      "model": "Qwen3-VL-8B-Instruct",
+      "size_b": 8.0,
+      "exp1_sponsored": 0.29,
+      "exp3a": 0.29,
+      "exp3b": 0.93
+    },
+    {
+      "model": "Qwen/Qwen3.5-9B",
+      "size_b": 9.0,
+      "exp1_sponsored": 0.81,
+      "exp3a": 0.98,
+      "exp3b": 0.96
+    },
+    {
+      "model": "GaleneAI/Magistral-Small-2509-FP8-Dynamic",
+      "size_b": 24.0,
+      "exp1_sponsored": 0.34,
+      "exp3a": 0.72,
+      "exp3b": 0.99
+    },
+    {
+      "model": "RedHatAI/Mistral-Small-3.2-24B-Instruct-2506-FP8",
+      "size_b": 24.0,
+      "exp1_sponsored": 0.5,
+      "exp3a": 0.85,
+      "exp3b": 1.0
+    },
+    {
+      "model": "RedHatAI/gemma-3-27b-it-quantized.w4a16",
+      "size_b": 27.0,
+      "exp1_sponsored": 0.44,
+      "exp3a": 1.0,
+      "exp3b": 1.0
+    },
+    {
+      "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+      "size_b": 35.0,
+      "exp1_sponsored": 0.73,
+      "exp3a": 0.73,
+      "exp3b": 0.97
+    },
+    {
+      "model": "gpt-oss-120b",
+      "size_b": 120.0,
+      "exp1_sponsored": 0.48,
+      "exp3a": 0.48,
+      "exp3b": 0.97
+    }
+  ],
+  "correlations": {
+    "exp1_sponsored": {
+      "n": 10,
+      "spearman_rho": 0.34756097560975613,
+      "spearman_p": 0.32508713960292557,
+      "pearson_r": 0.12984295801671386,
+      "pearson_p": 0.7207088267990976
+    },
+    "exp3a": {
+      "n": 10,
+      "spearman_rho": 0.25609756097560976,
+      "spearman_p": 0.4751054375857136,
+      "pearson_r": -0.08535320266793688,
+      "pearson_p": 0.8146441487351298
+    },
+    "exp3b": {
+      "n": 10,
+      "spearman_rho": 0.31783258920622803,
+      "spearman_p": 0.3708200591901698,
+      "pearson_r": 0.20779688531404464,
+      "pearson_p": 0.5645685450763807
+    }
+  }
+}

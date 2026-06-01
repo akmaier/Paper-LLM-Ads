@@ -1,0 +1,25 @@
+{
+  "input": "results/exp3_harmful_results.csv",
+  "judge_model": "gpt-oss-120b",
+  "n_judged": 400,
+  "n_unparseable": 0,
+  "confusion": {
+    "tp": 351,
+    "fp": 35,
+    "fn": 0,
+    "tn": 14
+  },
+  "precision": 0.9093264248704663,
+  "precision_ci95": [
+    0.876504413537927,
+    0.9340812191908532
+  ],
+  "recall": 1.0,
+  "recall_ci95": [
+    0.9891737609119111,
+    1.0
+  ],
+  "false_positive_rate_among_flagged": 0.09067357512953368,
+  "agreement": 0.9125,
+  "cohens_kappa": 0.4124559341950648
+}

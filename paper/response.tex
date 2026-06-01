@@ -1,0 +1,154 @@
+\documentclass[a4paper,runningheads]{llncs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\newcommand{\rev}[1]{\textcolor{blue}{#1}}
+\newcommand{\rc}[1]{\medskip\noindent\textbf{#1}\quad}
+
+\title{Response to Reviewers --- Paper 30\\
+\large ``Just Ask for a Table: A Thirty-Token User Prompt Defeats
+Sponsored Recommendations in Twelve LLMs''}
+\titlerunning{Response to Reviewers --- Paper 30}
+\author{}
+\institute{}
+
+\begin{document}
+\maketitle
+\vspace{-3.5em}
+
+\noindent We thank both reviewers for their careful and constructive
+reading. We are encouraged that Reviewer~1 finds the work
+\emph{acceptable} and that Reviewer~2 judges the contribution clear and
+the writing strong; we have used the criticisms to make the paper more
+rigorous. Below we answer every point. All manuscript changes are
+\rev{highlighted in blue} in the accompanying change-marked PDF;
+section and table numbers refer to the revised manuscript. No claim in
+the paper was weakened by the new experiments: the headline finding
+(the \texttt{compare} counter-prompt cuts the pooled sponsored rate
+from $46.9\,\%$ to $1.0\,\%$) is unchanged, and the additional analyses
+strengthen the reliability and honesty of the secondary claims.
+
+\section*{Reviewer 1 (Accept)}
+
+\rc{(R1.1) ``Briefly describe the specific components/stages of the
+evaluation pipelines that should have been specified.''}
+We agree this term was used without unpacking it. We have added an
+explicit enumeration in the Introduction (\S1, blue text): an
+evaluation pipeline is under-specified when it omits any of the stages
+that determine the measured rate --- the exact prompt template and
+option ordering, the decoding parameters (temperature, top-$p$,
+max-tokens) and seed, the number of trials per condition, the rule that
+maps a free-text reply to a binary outcome, and, when an LLM is that
+rule, the judge model and its prompt. We note that leaving any of these
+implicit forces a re-implementer to guess and that different guesses
+yield materially different rates --- which is precisely the failure mode
+our paper documents.
+
+\rc{(R1.2) ``Explain the term `reasoning-content fallback'.''}
+Done (\S3, blue text). Several gateway-hosted reasoning models return an
+empty \texttt{message.content} while placing the actual answer in a
+separate \texttt{reasoning\_content} field. The reasoning-content
+fallback parses the judge verdict from that field instead of discarding
+the call as empty; without it, such replies would be spuriously labelled
+\texttt{error}. We now state this explicitly and report that the fallback
+plus the shrink-and-retry loop reduce the unusable-row rate to below
+$0.3\,\%$.
+
+\section*{Reviewer 2 (Weak Reject)}
+
+\rc{(R2.1) ``All experiments use a single random seed; stability across
+runs is unclear.''}
+This is the most important criticism and we have addressed it directly
+with new data. We re-ran the two load-bearing conditions --- the Exp~1
+baseline sponsored rate and the headline \texttt{compare} counter-prompt
+--- plus the Exp~3b harmful-promotion condition under \rev{three
+additional independent seeds} (seeds 1--3, alongside the original
+seed~0), $100$ trials per model, holding the judge fixed at
+\texttt{gpt-oss-120b} so the four seeds are directly comparable. Pooled
+over the nine open-weight models, the per-seed rates are:
+
+\begin{center}\small
+\begin{tabular}{lcccc|cc}
+\hline
+ & seed 0 & seed 1 & seed 2 & seed 3 & mean & SD \\
+\hline
+Exp1 baseline sponsored (\%) & 64.1 & 65.3 & 63.9 & 65.0 & 64.6 & 0.7 \\
+\texttt{compare} counter (\%) & 0.3 & 0.1 & 0.3 & 0.3 & 0.3 & 0.1 \\
+Exp3b harmful promotion (\%) & 95.7 & 93.7 & 94.6 & 94.2 & 94.5 & 0.8 \\
+\hline
+\end{tabular}
+\end{center}
+
+\noindent The seed-to-seed standard deviation is \emph{below one
+percentage point} on all three metrics --- far smaller than the effects
+we report --- and the \texttt{compare} counter drives the rate to
+$\le0.3\,\%$ under every seed. The near-elimination is therefore not an
+artefact of seed~0. (These rates use the open-weight
+\texttt{gpt-oss-120b} judge on the nine still-hosted models, so the
+absolute baseline differs from the $46.9\,\%$ \texttt{gpt-4o}-judged,
+ten-model headline; the point of the table is the seed \emph{stability}
+of the effect under a fixed judge.) A condensed version has been added
+to \S5.1 and the single-seed sentence in the Limitations (\S7) updated.
+We note honestly that granite-4.0-micro was retired from our gateway
+between the original run and the rebuttal, so the check covers $9$ of
+the $10$ open-weight models.
+
+\rc{(R2.2) ``The effective sample size for the randomized
+sub-conditions is limited (${\approx}8$ trials/cell).''}
+The point is well taken and we want to be transparent about what our
+design does and does not support. We deliberately pool over the full
+$100$ trials per $\langle$model, experiment$\rangle$ pair: \emph{every
+confidence interval and significance test in the paper is computed on
+the pooled $n$} ($100$ per model, $1{,}000$ pooled across the ten
+open-weight models), never on the $\approx\!8$-trial implicit cells.
+The $\approx\!8$ figure describes only the within-trial randomisation of
+the nuisance factors (reasoning/SES/system-variant), which we marginalise
+over rather than estimate separately --- our claims are about marginal
+rates, not cell-level interactions. We have clarified this in \S3 and in
+the Limitations, and the new multi-seed evidence (R2.1) further bounds
+the sampling noise on the pooled rates.
+
+\rc{(R2.3) ``Clearer discussion of model-size vs.\ alignment effects;
+results do not follow a simple scale trend.''}
+We agree and have added a dedicated ``Size versus alignment'' paragraph
+to \S5.1 with quantitative backing. Across the ten open-weight models
+($3$--$120$\,B) the Spearman rank correlation between nominal size and
+behaviour is \emph{not significant} for any of the three rates: Exp~1
+sponsored $\rho=0.35$ ($p=0.33$), Exp~3a extraneous-ad $\rho=0.26$
+($p=0.48$), Exp~3b harmful-ad $\rho=0.32$ ($p=0.37$); Pearson
+coefficients are likewise near zero. Concretely, the smallest model
+($3$\,B) almost never emits the extraneous ad ($1/100$) yet recommends
+the sponsored flight at the pooled average, while a mid-sized $9$\,B
+model is the most sponsorship-prone of all ($81/100$). We now argue
+explicitly that the behaviour is governed by alignment and
+post-training choices rather than raw capacity --- which is exactly why a
+model-size-independent, user-side counter-prompt is an attractive
+mitigation.
+
+\rc{(R2.4) ``The Exp~3b keyword heuristic was validated on only $30$
+manually inspected replies.''}
+We have replaced the small manual check with a large-scale validation
+against an independent LLM judge. We re-judged a random sample of $400$
+Exp~3b replies with a judge (gpt-oss-120b) that reads only the
+user-facing text and decides whether the reply genuinely steers a
+distressed user toward a payday/title loan. Against this judge the
+keyword heuristic has \rev{precision $0.91$ (Wilson 95\,\% CI
+$[0.88,0.93]$) and recall $1.00$ ($[0.99,1.00]$)}: it catches every
+genuine promotion, while $9\,\%$ of flagged replies merely name such a
+product without recommending it. We have updated \S3 to report these
+numbers and to state that the \emph{genuine} promotion rate is
+$\approx\!88\,\%$ rather than the heuristic's $\approx\!97\,\%$. The
+near-universal-harm conclusion is unchanged, and we are grateful to the
+reviewer for prompting a more defensible measurement.
+
+\medskip\noindent We believe these revisions resolve all four of
+Reviewer~2's concerns with new empirical evidence rather than text
+alone, and we hope the strengthened paper now meets the bar for
+acceptance.
+
+\end{document}

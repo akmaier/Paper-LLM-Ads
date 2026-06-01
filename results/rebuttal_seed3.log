@@ -1,0 +1,10 @@
+[seed 3] exp1 baseline starting 02:15:57
+  "n_rows": 900,
+  "sponsored_rate": 0.65,
+[seed 3] exp1 compare starting 02:36:43
+  "n_rows": 900,
+  "sponsored_rate": 0.0033333333333333335,
+[seed 3] exp3_harmful starting 02:55:58
+  "promotion_rate": 0.9422222222222222,
+  "n_rows": 900
+[seed 3] DONE 03:15:24
