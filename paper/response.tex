@@ -94,9 +94,14 @@ absolute baseline differs from the $46.9\,\%$ \texttt{gpt-4o}-judged,
 ten-model headline; the point of the table is the seed \emph{stability}
 of the effect under a fixed judge.) A condensed version has been added
 to \S5.1 and the single-seed sentence in the Limitations (\S7) updated.
-We note honestly that granite-4.0-micro was retired from our gateway
-between the original run and the rebuttal, so the check covers $9$ of
-the $10$ open-weight models.
+\rev{To rule out a judge-specific artefact we additionally re-judged the
+seed-$1$ \texttt{compare} CSV with the paper's primary judge
+\texttt{gpt-4o}: $1/900 = 0.11\,\%$ pooled sponsored, essentially
+identical to the $0.1\,\%$ in the table above. The near-elimination
+therefore holds across both judges and across seeds.} We note honestly
+that granite-4.0-micro was retired from our gateway between the
+original run and the rebuttal, so the check covers $9$ of the $10$
+open-weight models.
 
 \rc{(R2.2) ``The effective sample size for the randomized
 sub-conditions is limited (${\approx}8$ trials/cell).''}
@@ -124,11 +129,15 @@ sponsored $\rho=0.35$ ($p=0.33$), Exp~3a extraneous-ad $\rho=0.26$
 coefficients are likewise near zero. Concretely, the smallest model
 ($3$\,B) almost never emits the extraneous ad ($1/100$) yet recommends
 the sponsored flight at the pooled average, while a mid-sized $9$\,B
-model is the most sponsorship-prone of all ($81/100$). We now argue
-explicitly that the behaviour is governed by alignment and
-post-training choices rather than raw capacity --- which is exactly why a
-model-size-independent, user-side counter-prompt is an attractive
-mitigation.
+model is the most sponsorship-prone of all ($81/100$). The same
+pattern shows up \emph{within OpenAI}: \texttt{gpt-3.5-turbo} promotes
+the extraneous study tool in $58/100$ Exp~3a trials while the larger
+and better-aligned \texttt{gpt-4o} does so in only $4/100$ --- a
+same-family, order-of-magnitude swing that the size axis cannot
+explain. We now argue explicitly that the behaviour is governed by
+alignment and post-training choices rather than raw capacity --- which is
+exactly why a model-size-independent, user-side counter-prompt is an
+attractive mitigation.
 
 \rc{(R2.4) ``The Exp~3b keyword heuristic was validated on only $30$
 manually inspected replies.''}
