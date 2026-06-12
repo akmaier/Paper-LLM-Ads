@@ -31,6 +31,14 @@
 
 \providecommand{\orcidlink}[1]{}
 
+% Revision highlighting: compile with \def\HLON{} (e.g. pdflatex
+% "\def\HLON{}\input{main}") to render all revised text in blue for the
+% change-marked PDF; the default build leaves the text black for the clean
+% camera copy.
+\newif\ifhl\hlfalse
+\ifdefined\HLON\hltrue\fi
+\newcommand{\rev}[1]{\ifhl\textcolor{blue}{#1}\else#1\fi}
+
 \renewcommand{\baselinestretch}{0.94}
 
 \begin{document}
@@ -101,13 +109,13 @@ deep-learning-based research is fragile: small implementation choices
 quietly translate into large measured differences. Subsequent
 field-wide reviews~\cite{Sem25} have only sharpened this picture, with
 under-specified evaluation pipelines and silent nondeterminism cited as
-the dominant root causes. By an under-specified pipeline we mean one
+the dominant root causes.\rev{ By an under-specified pipeline we mean one
 that omits any stage that determines the measured rate: the prompt
 template and option ordering, the decoding parameters (temperature,
 top-$p$, max-tokens) and seed, the trial count per condition, the rule
 mapping a free-text reply to a binary outcome, and -- when an LLM is that
 rule -- the judge model and its prompt. Leaving any implicit forces a
-re-implementer to guess, and different guesses yield different rates. Reproducing a published rate by reading the
+re-implementer to guess, and different guesses yield different rates.} Reproducing a published rate by reading the
 paper alone is therefore harder than it sounds, and it is harder still
 when each trial is a fresh roll of an LLM's dice.
 
@@ -255,7 +263,7 @@ Exp~3b flags \texttt{advance america}, \texttt{speedycash} or
 \texttt{speedy cash}, plus the generic phrasings
 \texttt{payday loan}/\texttt{payday lender}/\texttt{title loan}.
 Negative mentions (e.g.\ ``I would not recommend Chegg'') are not
-excluded. To bound the resulting over-count we re-judged a random
+excluded.\rev{ To bound the resulting over-count we re-judged a random
 sample of $400$ Exp~3b replies with an independent judge (gpt-oss-120b)
 that reads only the user-facing text and decides whether the reply
 genuinely steers the user toward a payday/title loan. The heuristic has
@@ -263,7 +271,7 @@ precision $0.91$ (Wilson 95\,\% CI $[0.88,0.93]$) and recall $1.00$
 ($[0.99,1.00]$): it flags every genuine promotion, while $9\,\%$ of
 flagged replies only name such a product without recommending it. The
 genuine rate is thus $\approx\!88\,\%$ rather than $\approx\!97\,\%$ --
-still near-universal.
+still near-universal.}
 
 \textbf{Trial count and seed.} The original paper's Section~3
 specifies $100$ trials per $\langle\text{model, reasoning,
@@ -292,10 +300,10 @@ the three Appendix~A.2 variants of~\cite{Wu26} (randomised per
 trial). Per-call failures -- context-window overflow, empty
 \texttt{message.content}, transient 5xx errors -- are absorbed by a
 shrink-and-retry loop on the eval call and a reasoning-content
-fallback on the judge call -- when a reasoning model returns an
+fallback on the judge call\rev{ -- when a reasoning model returns an
 empty \texttt{message.content} but places its answer in the separate
 \texttt{reasoning\_content} field that several gateway models expose,
-we parse the verdict from that field instead of discarding the call;
+we parse the verdict from that field instead of discarding the call};
 if all retries fail the row is labelled
 \texttt{error} and excluded from rate computations. This happened on
 fewer than $0.3\,\%$ of trials. All eval calls use temperature
@@ -545,7 +553,7 @@ $+22$\,pp $p=0.027$; gemma-4-E4B-it $+21$\,pp $p=0.034$), reproducing
 the paper's SES finding ($64.1\,\%$ high vs $48.6\,\%$ low) on a
 disjoint model set.
 
-\textbf{Size versus alignment.} The per-model rates do not follow a
+\rev{\textbf{Size versus alignment.} The per-model rates do not follow a
 parameter-count trend. Across the ten open-weight models ($3$--$120$\,B,
 MoE models counted by total parameters) the Spearman correlation between
 size and rate is non-significant for all three behaviours: Exp~1
@@ -559,9 +567,9 @@ larger \texttt{gpt-4o} in only $4/100$ -- an order-of-magnitude swing
 within a single family that the size axis cannot explain. The
 behaviour thus tracks alignment and post-training rather than
 capacity, which is why a size-independent user-side counter-prompt
-(\S\ref{sec:rq3}) is an attractive mitigation.
+(\S\ref{sec:rq3}) is an attractive mitigation.}
 
-\textbf{Seed robustness.} To confirm the rates do not hinge on the
+\rev{\textbf{Seed robustness.} To confirm the rates do not hinge on the
 single locked seed, we re-ran the Exp~1 baseline, the headline
 \texttt{compare} counter and Exp~3b under three further seeds (1--3) on
 the nine open-weight models still hosted on our gateway
@@ -571,7 +579,7 @@ the baseline sponsored rate is $64.6\pm0.7\,\%$, Exp~3b is
 $94.5\pm0.8\,\%$, and \texttt{compare} holds the rate at $\le0.3\,\%$
 under every seed. The seed-to-seed standard deviation is below one
 point on all three metrics, so the near-elimination is not an artefact
-of seed~0.
+of seed~0.}
 
 \subsection{Replicating the Section~4.3 Commission/Wealth Grid}
 \label{sec:rq2-grid}
@@ -886,12 +894,12 @@ Grok, Gemini, Claude, DeepSeek, Llama and the gated GPT-5 family
 remain out of scope by deliberate choice. Our trial count is one
 hundred per $\langle$model, experiment$\rangle$ randomised over
 $2 \times 2 \times 3 = 12$ nuisance cells, whereas the paper runs one
-hundred trials per cell; every interval and test we report is
+hundred trials per cell; \rev{every interval and test we report is
 computed on the pooled $n$ rather than on the $\approx\!8$-trial
-implicit cells, which we marginalise over. For the load-bearing
+implicit cells, which we marginalise over.} \rev{For the load-bearing
 conditions we estimate seed-to-seed variance directly across four seeds
 (\S\ref{sec:rq2-headline}) and find a standard deviation below one
-percentage point. We treat \texttt{gpt-3.5-turbo} and
+percentage point.} We treat \texttt{gpt-3.5-turbo} and
 \texttt{gpt-4o} as moving aliases; our runs were executed in
 May~2026 and consequently resolve to the OpenAI checkpoints active
 at that time.
